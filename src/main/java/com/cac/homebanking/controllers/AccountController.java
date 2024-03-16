@@ -1,5 +1,6 @@
 package com.cac.homebanking.controllers;
 
+import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.models.DTO.AccountDTO;
 import com.cac.homebanking.services.AccountService;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/v1")
 public class AccountController {
     private final AccountService accountService;
 
@@ -23,17 +24,17 @@ public class AccountController {
     }
 
     @GetMapping(value = "/accounts/{account_id}")
-    public ResponseEntity<AccountDTO> getAccount(@PathVariable Long account_id) {
+    public ResponseEntity<AccountDTO> getAccount(@PathVariable Long account_id) throws NotFoundException {
         return ResponseEntity.ok().body(accountService.getAccountById(account_id));
     }
 
     @PostMapping(value = "/accounts")
-    public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountDTO accountDTO) {
+    public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountDTO accountDTO) throws NotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(accountDTO));
     }
 
     @PutMapping(value = "/accounts/{account_id}")
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long account_id, @RequestBody AccountDTO accountDTO) {
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long account_id, @RequestBody AccountDTO accountDTO) throws NotFoundException {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(accountService.update(account_id, accountDTO));
     }
 

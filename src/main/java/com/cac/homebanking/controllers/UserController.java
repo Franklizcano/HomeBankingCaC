@@ -1,5 +1,6 @@
 package com.cac.homebanking.controllers;
 
+import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.models.DTO.UserDTO;
 import com.cac.homebanking.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class UserController {
 
     private final UserService userService;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/users/{user_id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long user_id) {
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long user_id) throws NotFoundException {
         return ResponseEntity.ok().body(userService.getUserById(user_id));
     }
 
@@ -34,12 +35,12 @@ public class UserController {
     }
 
     @PutMapping(value = "/users/{user_id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long user_id, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long user_id, @RequestBody UserDTO userDTO) throws NotFoundException {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.update(user_id, userDTO));
     }
 
     @DeleteMapping(value = "/users/{user_id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long user_id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long user_id) throws NotFoundException {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userService.delete(user_id));
     }
 }

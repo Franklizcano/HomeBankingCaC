@@ -6,6 +6,7 @@ import com.cac.homebanking.mappers.UserMapper;
 import com.cac.homebanking.models.DTO.UserDTO;
 import com.cac.homebanking.models.UserBank;
 import com.cac.homebanking.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +30,12 @@ public class UserService {
                 .toList();
     }
 
-    public UserDTO getUserById(Long id) {
+    public UserDTO getUserById(Long id) throws NotFoundException {
         Optional<UserBank> user;
         try {
             user = userRepository.findById(id);
         } catch (Exception e) {
-            throw new BusinessException("Ha ocurrido un error de tipo " + e);
+            throw new BusinessException("Ha ocurrido un error de tipo: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         if (user.isEmpty()) {
@@ -52,7 +53,7 @@ public class UserService {
         return UserMapper.userEntityToDTO(userRepository.save(UserMapper.userDTOToEntity(userDTO)));
     }
 
-    public UserDTO update(Long id, UserDTO userDTO){
+    public UserDTO update(Long id, UserDTO userDTO) throws NotFoundException {
         Optional<UserBank> userCreated = userRepository.findById(id);
 
         if  (userCreated.isPresent()) {
@@ -66,12 +67,12 @@ public class UserService {
         }
     }
 
-    public String delete(Long id) {
+    public String delete(Long id) throws NotFoundException {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return "The user has been deleted.";
         } else {
-            return "The user has not been deleted";
+            throw new NotFoundException("User not found with the id " + id);
         }
     }
 

@@ -20,4 +20,5 @@ public class Account {
     private BigDecimal balance;
     @Column(name = "user_id")
     private Long userId;
+
 }
