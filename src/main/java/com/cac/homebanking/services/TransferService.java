@@ -30,13 +30,13 @@ public class TransferService {
                 .toList();
     }
 
-    public TransferDTO getTransferById(Long transferId) {
+    public TransferDTO getTransferById(Long transferId) throws NotFoundException {
         Transfer transfer = transferRepository.findById(transferId).orElseThrow(() ->
                 new NotFoundException("The transfer is not found with id " + transferId));
         return TransferMapper.transferEntityToDTO(transfer);
     }
 
-    public TransferDTO update(Long id, TransferDTO transferDTO) {
+    public TransferDTO update(Long id, TransferDTO transferDTO) throws NotFoundException {
         Optional<Transfer> trasnferCreated = transferRepository.findById(id);
 
         if  (trasnferCreated.isPresent()) {
@@ -60,7 +60,7 @@ public class TransferService {
     }
 
     @Transactional
-    public TransferDTO performTransfer(TransferDTO transferDTO) {
+    public TransferDTO performTransfer(TransferDTO transferDTO) throws NotFoundException {
         accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
         accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());
 
