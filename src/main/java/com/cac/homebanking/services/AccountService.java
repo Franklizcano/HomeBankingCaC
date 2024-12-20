@@ -16,8 +16,8 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserService userService;
 
-    public AccountService(AccountRepository accountRepository,
-                          UserService userService) {
+    public AccountService(final AccountRepository accountRepository,
+                          final UserService userService) {
         this.accountRepository = accountRepository;
         this.userService = userService;
     }
@@ -27,7 +27,6 @@ public class AccountService {
                 .stream()
                 .map(AccountMapper::accountEntityToDTO)
                 .toList();
-
     }
 
     public AccountDTO getAccountById(Long id) throws NotFoundException {

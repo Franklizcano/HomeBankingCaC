@@ -11,5 +11,4 @@ public class HomeBankingCaCApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HomeBankingCaCApplication.class, args);
 	}
-
 }

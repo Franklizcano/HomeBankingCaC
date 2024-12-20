@@ -14,7 +14,7 @@ import java.util.List;
 public class AccountController {
     private final AccountService accountService;
 
-    public AccountController(AccountService accountService) {
+    AccountController(final AccountService accountService) {
         this.accountService = accountService;
     }
 
@@ -23,9 +23,9 @@ public class AccountController {
         return ResponseEntity.ok().body(accountService.getAllAccounts());
     }
 
-    @GetMapping(value = "/accounts/{account_id}")
-    public ResponseEntity<AccountDTO> getAccount(@PathVariable Long account_id) throws NotFoundException {
-        return ResponseEntity.ok().body(accountService.getAccountById(account_id));
+    @GetMapping(value = "/accounts/{accountId}")
+    public ResponseEntity<AccountDTO> getAccount(@PathVariable Long accountId) throws NotFoundException {
+        return ResponseEntity.ok().body(accountService.getAccountById(accountId));
     }
 
     @PostMapping(value = "/accounts")
@@ -33,13 +33,13 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(accountDTO));
     }
 
-    @PutMapping(value = "/accounts/{account_id}")
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long account_id, @RequestBody AccountDTO accountDTO) throws NotFoundException {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(accountService.update(account_id, accountDTO));
+    @PutMapping(value = "/accounts/{accountId}")
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO accountDTO) throws NotFoundException {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(accountService.update(accountId, accountDTO));
     }
 
-    @DeleteMapping(value = "/accounts/{account_id}")
-    public ResponseEntity<String> deleteAccount(@PathVariable Long account_id) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(accountService.delete(account_id));
+    @DeleteMapping(value = "/accounts/{accountId}")
+    public ResponseEntity<String> deleteAccount(@PathVariable Long accountId) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(accountService.delete(accountId));
     }
 }

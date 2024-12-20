@@ -17,7 +17,7 @@ public class TransferService {
     private final TransferRepository transferRepository;
     private final AccountService accountService;
 
-    public TransferService(TransferRepository transferRepository,
+    TransferService(final TransferRepository transferRepository,
                            AccountService accountService) {
         this.transferRepository = transferRepository;
         this.accountService = accountService;

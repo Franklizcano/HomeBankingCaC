@@ -15,7 +15,7 @@ public class TransferController {
 
     private final TransferService transferService;
 
-    TransferController(TransferService transferService) {
+    TransferController(final TransferService transferService) {
         this.transferService = transferService;
     }
 
@@ -24,9 +24,9 @@ public class TransferController {
         return ResponseEntity.ok().body(transferService.getTransfers());
     }
 
-    @GetMapping(value = "/transfers/{transfer_id}")
-    public ResponseEntity<TransferDTO> getTransfer(@PathVariable Long transfer_id) throws NotFoundException {
-        return ResponseEntity.ok().body(transferService.getTransferById(transfer_id));
+    @GetMapping(value = "/transfers/{transferId}")
+    public ResponseEntity<TransferDTO> getTransfer(@PathVariable Long transferId) throws NotFoundException {
+        return ResponseEntity.ok().body(transferService.getTransferById(transferId));
     }
 
     @PostMapping(value = "/transfers")

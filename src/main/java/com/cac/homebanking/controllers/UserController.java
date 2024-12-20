@@ -15,7 +15,7 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    UserController(final UserService userService) {
         this.userService = userService;
     }
 
@@ -24,9 +24,9 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
-    @GetMapping(value = "/users/{user_id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long user_id) throws NotFoundException {
-        return ResponseEntity.ok().body(userService.getUserById(user_id));
+    @GetMapping(value = "/users/{userId}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long userId) throws NotFoundException {
+        return ResponseEntity.ok().body(userService.getUserById(userId));
     }
 
     @PostMapping(value = "/users")
@@ -34,13 +34,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
     }
 
-    @PutMapping(value = "/users/{user_id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long user_id, @RequestBody UserDTO userDTO) throws NotFoundException {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.update(user_id, userDTO));
+    @PutMapping(value = "/users/{userId}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) throws NotFoundException {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.update(userId, userDTO));
     }
 
-    @DeleteMapping(value = "/users/{user_id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long user_id) throws NotFoundException {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userService.delete(user_id));
+    @DeleteMapping(value = "/users/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) throws NotFoundException {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userService.delete(userId));
     }
 }
