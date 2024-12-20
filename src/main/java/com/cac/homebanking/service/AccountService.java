@@ -1,9 +1,9 @@
-package com.cac.homebanking.services;
+package com.cac.homebanking.service;
 
 import com.cac.homebanking.exception.NotFoundException;
-import com.cac.homebanking.mappers.AccountMapper;
-import com.cac.homebanking.models.Account;
-import com.cac.homebanking.models.DTO.AccountDTO;
+import com.cac.homebanking.mapper.AccountMapper;
+import com.cac.homebanking.model.Account;
+import com.cac.homebanking.model.DTO.AccountDTO;
 import com.cac.homebanking.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 

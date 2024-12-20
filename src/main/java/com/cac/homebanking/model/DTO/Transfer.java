@@ -1,4 +1,4 @@
-package com.cac.homebanking.models;
+package com.cac.homebanking.model.DTO;
 
 import jakarta.persistence.*;
 import lombok.Getter;

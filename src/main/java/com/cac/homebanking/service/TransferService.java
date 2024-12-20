@@ -1,9 +1,9 @@
-package com.cac.homebanking.services;
+package com.cac.homebanking.service;
 
 import com.cac.homebanking.exception.NotFoundException;
-import com.cac.homebanking.mappers.TransferMapper;
-import com.cac.homebanking.models.DTO.TransferDTO;
-import com.cac.homebanking.models.Transfer;
+import com.cac.homebanking.mapper.TransferMapper;
+import com.cac.homebanking.model.DTO.TransferDTO;
+import com.cac.homebanking.model.DTO.Transfer;
 import com.cac.homebanking.repository.TransferRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

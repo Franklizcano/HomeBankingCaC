@@ -1,4 +1,4 @@
-package com.cac.homebanking.controllers;
+package com.cac.homebanking.controller;
 
 import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.ErrorMessage;

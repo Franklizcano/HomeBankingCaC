@@ -1,7 +1,7 @@
-package com.cac.homebanking.mappers;
+package com.cac.homebanking.mapper;
 
-import com.cac.homebanking.models.DTO.UserDTO;
-import com.cac.homebanking.models.UserBank;
+import com.cac.homebanking.model.DTO.UserDTO;
+import com.cac.homebanking.model.UserBank;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

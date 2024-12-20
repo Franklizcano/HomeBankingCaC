@@ -1,10 +1,10 @@
-package com.cac.homebanking.services;
+package com.cac.homebanking.service;
 
 import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.NotFoundException;
-import com.cac.homebanking.mappers.UserMapper;
-import com.cac.homebanking.models.DTO.UserDTO;
-import com.cac.homebanking.models.UserBank;
+import com.cac.homebanking.mapper.UserMapper;
+import com.cac.homebanking.model.DTO.UserDTO;
+import com.cac.homebanking.model.UserBank;
 import com.cac.homebanking.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
