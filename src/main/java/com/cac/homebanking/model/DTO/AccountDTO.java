@@ -1,6 +1,6 @@
-package com.cac.homebanking.models;
+package com.cac.homebanking.model.DTO;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,15 +10,10 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 @NoArgsConstructor
-@Entity
-@Table(name = "accounts")
-public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AccountDTO {
     private Long id;
     private Integer number;
     private BigDecimal balance;
     @Column(name = "user_id")
     private Long userId;
-
 }

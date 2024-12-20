@@ -1,8 +1,8 @@
-package com.cac.homebanking.controllers;
+package com.cac.homebanking.controller;
 
 import com.cac.homebanking.exception.NotFoundException;
-import com.cac.homebanking.models.DTO.UserDTO;
-import com.cac.homebanking.services.UserService;
+import com.cac.homebanking.model.DTO.UserDTO;
+import com.cac.homebanking.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

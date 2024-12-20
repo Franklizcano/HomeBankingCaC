@@ -1,4 +1,4 @@
-package com.cac.homebanking.models.DTO;
+package com.cac.homebanking.model.DTO;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

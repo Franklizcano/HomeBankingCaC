@@ -1,6 +1,6 @@
 package com.cac.homebanking.repository;
 
-import com.cac.homebanking.models.UserBank;
+import com.cac.homebanking.model.UserBank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
