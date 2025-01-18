@@ -1,7 +1,7 @@
 package com.cac.homebanking.mapper;
 
 import com.cac.homebanking.model.DTO.TransferDTO;
-import com.cac.homebanking.model.DTO.Transfer;
+import com.cac.homebanking.model.Transfer;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

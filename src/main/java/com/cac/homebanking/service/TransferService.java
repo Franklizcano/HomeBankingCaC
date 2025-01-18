@@ -2,15 +2,14 @@ package com.cac.homebanking.service;
 
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
+import com.cac.homebanking.model.Transfer;
 import com.cac.homebanking.model.DTO.TransferDTO;
-import com.cac.homebanking.model.DTO.Transfer;
 import com.cac.homebanking.repository.TransferRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransferService {
@@ -18,7 +17,7 @@ public class TransferService {
     private final AccountService accountService;
 
     TransferService(final TransferRepository transferRepository,
-                           AccountService accountService) {
+                           final AccountService accountService) {
         this.transferRepository = transferRepository;
         this.accountService = accountService;
     }
@@ -64,14 +63,11 @@ public class TransferService {
         accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
         accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());
 
-        Transfer transfer = new Transfer();
+        Transfer transfer = TransferMapper.transferDTOToEntity(transferDTO);
 
-        LocalDateTime date = LocalDateTime.now();
+        ZonedDateTime date = ZonedDateTime.now();
         // Seteamos el objeto fecha actual en el transferDto
         transfer.setDate(date);
-        transfer.setOriginId(transferDTO.getOriginId());
-        transfer.setTargetId(transferDTO.getTargetId());
-        transfer.setAmount(transferDTO.getAmount());
         transfer = transferRepository.save(transfer);
 
         return TransferMapper.transferEntityToDTO(transfer);

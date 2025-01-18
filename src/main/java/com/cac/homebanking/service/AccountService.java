@@ -30,7 +30,7 @@ public class AccountService {
     }
 
     public AccountDTO getAccountById(Long id) throws NotFoundException {
-        Account account = accountRepository.findById(id).orElseThrow(() -> new NotFoundException("The account is not found with id: " + id));
+        Account account = accountRepository.findById(id).orElseThrow(() -> new NotFoundException("" + id));
         return AccountMapper.accountEntityToDTO(account);
     }
 
@@ -42,7 +42,7 @@ public class AccountService {
         }
     }
 
-    public AccountDTO withdraw(BigDecimal amount, Long idOrigin) throws NotFoundException {
+    public void withdraw(BigDecimal amount, Long idOrigin) throws NotFoundException {
         Account account = accountRepository.findById(idOrigin).orElseThrow(() -> new NotFoundException("The account is not found with id: " + idOrigin));
 
         if(account.getBalance().compareTo(amount) > 0) {
@@ -50,16 +50,16 @@ public class AccountService {
             accountRepository.save(account);
         }
 
-        return AccountMapper.accountEntityToDTO(account);
+        AccountMapper.accountEntityToDTO(account);
     }
 
-    public AccountDTO deposit(BigDecimal amount, Long idTarget) throws NotFoundException {
+    public void deposit(BigDecimal amount, Long idTarget) throws NotFoundException {
         Account account = accountRepository.findById(idTarget).orElseThrow(() -> new NotFoundException("The account is not found with id: " + idTarget));
 
         account.setBalance(account.getBalance().add(amount));
         accountRepository.save(account);
 
-        return AccountMapper.accountEntityToDTO(account);
+        AccountMapper.accountEntityToDTO(account);
     }
 
     public AccountDTO update(Long id, AccountDTO accountDTO) throws NotFoundException {
