@@ -1,5 +1,6 @@
 package com.cac.homebanking.service;
 
+import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
 import com.cac.homebanking.model.Transfer;
@@ -59,15 +60,13 @@ public class TransferService {
     }
 
     @Transactional
-    public TransferDTO performTransfer(TransferDTO transferDTO) throws NotFoundException {
+    public TransferDTO performTransfer(TransferDTO transferDTO) throws NotFoundException, InsufficientFundsException {
         accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
         accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());
 
         Transfer transfer = TransferMapper.transferDTOToEntity(transferDTO);
 
-        ZonedDateTime date = ZonedDateTime.now();
-        // Seteamos el objeto fecha actual en el transferDto
-        transfer.setDate(date);
+        transfer.setDate(ZonedDateTime.now());
         transfer = transferRepository.save(transfer);
 
         return TransferMapper.transferEntityToDTO(transfer);

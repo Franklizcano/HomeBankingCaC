@@ -1,5 +1,6 @@
 package com.cac.homebanking.controller;
 
+import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.model.DTO.TransferDTO;
 import com.cac.homebanking.service.TransferService;
@@ -30,7 +31,7 @@ public class TransferController {
     }
 
     @PostMapping(value = "/transfers")
-    public ResponseEntity<TransferDTO> performTransfer(@RequestBody TransferDTO transferDTO) throws NotFoundException {
+    public ResponseEntity<TransferDTO> performTransfer(@RequestBody TransferDTO transferDTO) throws NotFoundException, InsufficientFundsException {
         return ResponseEntity.status(HttpStatus.CREATED).body(transferService.performTransfer(transferDTO));
     }
 }

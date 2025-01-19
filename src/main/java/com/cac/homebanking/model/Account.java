@@ -16,9 +16,14 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer number;
+    private Long number;
     private BigDecimal balance;
     @Column(name = "user_id")
     private Long userId;
 
+    public Account(Long number, BigDecimal balance, Long userId) {
+        this.number = number;
+        this.balance = balance;
+        this.userId = userId;
+    }
 }
