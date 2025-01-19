@@ -2,6 +2,7 @@ package com.cac.homebanking.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,4 +26,6 @@ public class Transfer {
     private Long targetId;
     private ZonedDateTime date = ZonedDateTime.now();
     private BigDecimal amount;
+    @Enumerated
+    private TransferStatus status;
 }

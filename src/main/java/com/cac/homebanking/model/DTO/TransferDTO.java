@@ -1,5 +1,6 @@
 package com.cac.homebanking.model.DTO;
 
+import com.cac.homebanking.model.TransferStatus;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import lombok.EqualsAndHashCode;
@@ -15,13 +16,14 @@ public class TransferDTO {
     private Long id;
     private Long originId;
     private Long targetId;
-    private ZonedDateTime date;
+    private ZonedDateTime date = ZonedDateTime.now();
     private BigDecimal amount;
+    private TransferStatus status;
 
-    public TransferDTO(Long originId, Long targetId, ZonedDateTime date, BigDecimal amount) {
+    public TransferDTO(Long originId, Long targetId, BigDecimal amount, TransferStatus status) {
         this.originId = originId;
         this.targetId = targetId;
-        this.date = date;
         this.amount = amount;
+        this.status = status;
     }
 }

@@ -1,16 +1,17 @@
 package com.cac.homebanking.service;
 
+import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
-import com.cac.homebanking.model.Transfer;
 import com.cac.homebanking.model.DTO.TransferDTO;
+import com.cac.homebanking.model.Transfer;
+import com.cac.homebanking.model.TransferStatus;
 import com.cac.homebanking.repository.TransferRepository;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransferService {
@@ -59,14 +60,18 @@ public class TransferService {
         }
     }
 
-    @Transactional
     public TransferDTO performTransfer(TransferDTO transferDTO) throws NotFoundException, InsufficientFundsException {
-        accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
-        accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());
+        try {
+            accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
+            accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());
+        } catch (Exception e) {
+            transferDTO.setStatus(TransferStatus.FAILED);
+            transferRepository.save(TransferMapper.transferDTOToEntity(transferDTO));
+            throw new BusinessException("An error occurred while performing the transfer", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
+        transferDTO.setStatus(TransferStatus.COMPLETED);
         Transfer transfer = TransferMapper.transferDTOToEntity(transferDTO);
-
-        transfer.setDate(ZonedDateTime.now());
         transfer = transferRepository.save(transfer);
 
         return TransferMapper.transferEntityToDTO(transfer);

@@ -9,10 +9,10 @@ import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
 import com.cac.homebanking.model.Account;
 import com.cac.homebanking.model.DTO.TransferDTO;
+import com.cac.homebanking.model.TransferStatus;
 import com.cac.homebanking.repository.AccountRepository;
 import com.cac.homebanking.repository.TransferRepository;
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +42,7 @@ class TransferServiceTest {
   void performTransfer() throws NotFoundException, InsufficientFundsException {
     when(accountRepository.findById(1L)).thenReturn(Optional.of(new Account(13123L, BigDecimal.valueOf(1000), 1L)));
     when(accountRepository.findById(2L)).thenReturn(Optional.of(new Account(12313L, BigDecimal.valueOf(1000), 2L)));
-    TransferDTO transferDTO = new TransferDTO(1L, 2L, ZonedDateTime.now(), BigDecimal.valueOf(100));
+    TransferDTO transferDTO = new TransferDTO(1L, 2L, BigDecimal.valueOf(100), TransferStatus.COMPLETED);
     when(transferRepository.save(any())).thenReturn(TransferMapper.transferDTOToEntity(transferDTO));
 
     assertEquals(transferService.performTransfer(transferDTO), transferDTO);
