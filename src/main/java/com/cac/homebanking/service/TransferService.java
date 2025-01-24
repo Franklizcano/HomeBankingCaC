@@ -1,16 +1,17 @@
 package com.cac.homebanking.service;
 
+import com.cac.homebanking.exception.BusinessException;
+import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
 import com.cac.homebanking.model.DTO.TransferDTO;
-import com.cac.homebanking.model.DTO.Transfer;
+import com.cac.homebanking.model.Transfer;
+import com.cac.homebanking.model.TransferStatus;
 import com.cac.homebanking.repository.TransferRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TransferService {
@@ -18,7 +19,7 @@ public class TransferService {
     private final AccountService accountService;
 
     TransferService(final TransferRepository transferRepository,
-                           AccountService accountService) {
+                           final AccountService accountService) {
         this.transferRepository = transferRepository;
         this.accountService = accountService;
     }
@@ -59,19 +60,18 @@ public class TransferService {
         }
     }
 
-    @Transactional
-    public TransferDTO performTransfer(TransferDTO transferDTO) throws NotFoundException {
-        accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
-        accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());
+    public TransferDTO performTransfer(TransferDTO transferDTO) throws NotFoundException, InsufficientFundsException {
+        try {
+            accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
+            accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());
+        } catch (Exception e) {
+            transferDTO.setStatus(TransferStatus.FAILED);
+            transferRepository.save(TransferMapper.transferDTOToEntity(transferDTO));
+            throw new BusinessException("An error occurred while performing the transfer", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        Transfer transfer = new Transfer();
-
-        LocalDateTime date = LocalDateTime.now();
-        // Seteamos el objeto fecha actual en el transferDto
-        transfer.setDate(date);
-        transfer.setOriginId(transferDTO.getOriginId());
-        transfer.setTargetId(transferDTO.getTargetId());
-        transfer.setAmount(transferDTO.getAmount());
+        transferDTO.setStatus(TransferStatus.COMPLETED);
+        Transfer transfer = TransferMapper.transferDTOToEntity(transferDTO);
         transfer = transferRepository.save(transfer);
 
         return TransferMapper.transferEntityToDTO(transfer);

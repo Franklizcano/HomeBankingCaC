@@ -6,13 +6,12 @@ import com.cac.homebanking.mapper.UserMapper;
 import com.cac.homebanking.model.DTO.UserDTO;
 import com.cac.homebanking.model.UserBank;
 import com.cac.homebanking.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -79,13 +78,4 @@ public class UserService {
     public Boolean existsById(Long id) {
         return userRepository.existsById(id);
     }
-
-    // TODO: Generar la asociación de una primer cuenta al crear un User
-    // Agregar una cuenta al usuario
-    /*public UserDto addAccountToUser(AccountDto account, Long id){
-        // primero: buscar el usuario por id
-        // segundo: añadir la cuenta a la lista del usuario encontrado
-        // tercero: devolver el usuario con la cuenta agregada
-        return null;
-    }*/
 }

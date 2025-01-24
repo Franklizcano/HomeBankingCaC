@@ -1,15 +1,15 @@
 package com.cac.homebanking.service;
 
+import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.AccountMapper;
 import com.cac.homebanking.model.Account;
 import com.cac.homebanking.model.DTO.AccountDTO;
 import com.cac.homebanking.repository.AccountRepository;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AccountService {
@@ -42,24 +42,23 @@ public class AccountService {
         }
     }
 
-    public AccountDTO withdraw(BigDecimal amount, Long idOrigin) throws NotFoundException {
-        Account account = accountRepository.findById(idOrigin).orElseThrow(() -> new NotFoundException("The account is not found with id: " + idOrigin));
+    public AccountDTO withdraw(BigDecimal amount, Long idOrigin) throws NotFoundException, InsufficientFundsException {
+        AccountDTO account = getAccountById(idOrigin);
 
         if(account.getBalance().compareTo(amount) > 0) {
             account.setBalance(account.getBalance().subtract(amount));
-            accountRepository.save(account);
+            accountRepository.save(AccountMapper.accountDTOToEntity(account));
+        } else {
+            throw new InsufficientFundsException("The account has not enough money to withdraw");
         }
-
-        return AccountMapper.accountEntityToDTO(account);
+        return account;
     }
 
     public AccountDTO deposit(BigDecimal amount, Long idTarget) throws NotFoundException {
-        Account account = accountRepository.findById(idTarget).orElseThrow(() -> new NotFoundException("The account is not found with id: " + idTarget));
-
+        AccountDTO account = getAccountById(idTarget);
         account.setBalance(account.getBalance().add(amount));
-        accountRepository.save(account);
-
-        return AccountMapper.accountEntityToDTO(account);
+        accountRepository.save(AccountMapper.accountDTOToEntity(account));
+        return account;
     }
 
     public AccountDTO update(Long id, AccountDTO accountDTO) throws NotFoundException {

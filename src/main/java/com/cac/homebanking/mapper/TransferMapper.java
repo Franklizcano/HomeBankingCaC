@@ -1,7 +1,7 @@
 package com.cac.homebanking.mapper;
 
 import com.cac.homebanking.model.DTO.TransferDTO;
-import com.cac.homebanking.model.DTO.Transfer;
+import com.cac.homebanking.model.Transfer;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -14,6 +14,7 @@ public class TransferMapper {
         transferDTO.setTargetId(transfer.getTargetId());
         transferDTO.setDate(transfer.getDate());
         transferDTO.setAmount(transfer.getAmount());
+        transferDTO.setStatus(transfer.getStatus());
         return transferDTO;
     }
 
@@ -24,6 +25,7 @@ public class TransferMapper {
         transfer.setTargetId(transferDTO.getTargetId());
         transfer.setDate(transferDTO.getDate());
         transfer.setAmount(transferDTO.getAmount());
+        transfer.setStatus(transferDTO.getStatus());
         return transfer;
     }
 }
