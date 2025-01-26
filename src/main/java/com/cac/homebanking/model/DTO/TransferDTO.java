@@ -3,6 +3,7 @@ package com.cac.homebanking.model.DTO;
 import com.cac.homebanking.model.TransferStatus;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class TransferDTO {
     private Long id;
+    private UUID uuid = UUID.randomUUID();
     private Long originId;
     private Long targetId;
     private ZonedDateTime date = ZonedDateTime.now();

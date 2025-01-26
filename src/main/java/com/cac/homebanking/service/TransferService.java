@@ -1,12 +1,12 @@
 package com.cac.homebanking.service;
 
 import com.cac.homebanking.exception.BusinessException;
-import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
 import com.cac.homebanking.model.DTO.TransferDTO;
 import com.cac.homebanking.model.Transfer;
 import com.cac.homebanking.model.TransferStatus;
+import com.cac.homebanking.publisher.TransferPublisher;
 import com.cac.homebanking.repository.TransferRepository;
 import java.util.List;
 import java.util.Optional;
@@ -17,9 +17,12 @@ import org.springframework.stereotype.Service;
 public class TransferService {
     private final TransferRepository transferRepository;
     private final AccountService accountService;
+    private final TransferPublisher transferPublisher;
 
     TransferService(final TransferRepository transferRepository,
-                           final AccountService accountService) {
+                           final AccountService accountService,
+                           final TransferPublisher transferPublisher) {
+        this.transferPublisher = transferPublisher;
         this.transferRepository = transferRepository;
         this.accountService = accountService;
     }
@@ -60,7 +63,11 @@ public class TransferService {
         }
     }
 
-    public TransferDTO performTransfer(TransferDTO transferDTO) throws NotFoundException, InsufficientFundsException {
+    public void publish(TransferDTO message) {
+        transferPublisher.publish(message);
+    }
+
+    public TransferDTO performTransfer(TransferDTO transferDTO) {
         try {
             accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
             accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());

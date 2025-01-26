@@ -1,14 +1,17 @@
 package com.cac.homebanking.controller;
 
-import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.model.DTO.TransferDTO;
 import com.cac.homebanking.service.TransferService;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1")
@@ -31,7 +34,8 @@ public class TransferController {
     }
 
     @PostMapping(value = "/transfers")
-    public ResponseEntity<TransferDTO> performTransfer(@RequestBody TransferDTO transferDTO) throws NotFoundException, InsufficientFundsException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(transferService.performTransfer(transferDTO));
+    public ResponseEntity performTransfer(@RequestBody TransferDTO transferDTO) {
+        transferService.publish(transferDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
