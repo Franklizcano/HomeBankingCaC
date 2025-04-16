@@ -1,6 +1,9 @@
 package com.cac.homebanking.config;
 
+import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -19,14 +22,15 @@ public class RabbitMQConfig {
     return new Queue(queueName, true);
   }
 
-  /*@Bean
+  @Bean
   public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
       ConnectionFactory connectionFactory) {
     SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
     factory.setConnectionFactory(connectionFactory);
     factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+    factory.setMessageConverter(jsonToMapMessageConverter());
     return factory;
-  }*/
+  }
 
   @Bean
   public MessageConverter jsonToMapMessageConverter() {

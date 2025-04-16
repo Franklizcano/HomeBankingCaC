@@ -45,7 +45,7 @@ public class AccountService {
     public AccountDTO withdraw(BigDecimal amount, Long idOrigin) throws NotFoundException, InsufficientFundsException {
         AccountDTO account = getAccountById(idOrigin);
 
-        if(account.getBalance().compareTo(amount) > 0) {
+        if(account.getBalance().compareTo(amount) >= 0) {
             account.setBalance(account.getBalance().subtract(amount));
             accountRepository.save(AccountMapper.accountDTOToEntity(account));
         } else {
