@@ -1,5 +1,6 @@
 package com.cac.homebanking.service;
 
+import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.AccountMapper;
@@ -9,6 +10,7 @@ import com.cac.homebanking.repository.AccountRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,11 +37,18 @@ public class AccountService {
     }
 
     public AccountDTO createAccount(AccountDTO accountDTO) throws NotFoundException {
-        if (userService.existsById(accountDTO.getUserId())) {
-            return AccountMapper.accountEntityToDTO(accountRepository.save(AccountMapper.accountDTOToEntity(accountDTO)));
-        } else {
-            throw new NotFoundException("This account isn't already existing");
+        if (!userService.existsById(accountDTO.getUserId())) {
+            throw new NotFoundException("This user isn't already existing");
         }
+
+        boolean accountExists = accountRepository.countByUserIdAndAccountType(accountDTO.getUserId(), accountDTO.getAccountType()) > 0;
+
+        if (accountExists) {
+            throw new BusinessException("The user already has an account of this type", HttpStatus.BAD_REQUEST);
+        }
+
+        Account savedAccount = accountRepository.save(AccountMapper.accountDTOToEntity(accountDTO));
+        return AccountMapper.accountEntityToDTO(savedAccount);
     }
 
     public AccountDTO withdraw(BigDecimal amount, Long idOrigin) throws NotFoundException, InsufficientFundsException {
