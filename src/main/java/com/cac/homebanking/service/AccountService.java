@@ -51,9 +51,7 @@ public class AccountService {
         return AccountMapper.accountEntityToDTO(savedAccount);
     }
 
-    public AccountDTO withdraw(BigDecimal amount, Long idOrigin) throws NotFoundException, InsufficientFundsException {
-        AccountDTO account = getAccountById(idOrigin);
-
+    public AccountDTO withdraw(BigDecimal amount, AccountDTO account) throws InsufficientFundsException {
         if(account.getBalance().compareTo(amount) >= 0) {
             account.setBalance(account.getBalance().subtract(amount));
             accountRepository.save(AccountMapper.accountDTOToEntity(account));
@@ -63,8 +61,7 @@ public class AccountService {
         return account;
     }
 
-    public AccountDTO deposit(BigDecimal amount, Long idTarget) throws NotFoundException {
-        AccountDTO account = getAccountById(idTarget);
+    public AccountDTO deposit(BigDecimal amount, AccountDTO account) {
         account.setBalance(account.getBalance().add(amount));
         accountRepository.save(AccountMapper.accountDTOToEntity(account));
         return account;

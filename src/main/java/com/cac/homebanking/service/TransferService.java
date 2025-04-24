@@ -3,6 +3,7 @@ package com.cac.homebanking.service;
 import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
+import com.cac.homebanking.model.DTO.AccountDTO;
 import com.cac.homebanking.model.DTO.TransferDTO;
 import com.cac.homebanking.model.Transfer;
 import com.cac.homebanking.model.TransferStatus;
@@ -67,20 +68,22 @@ public class TransferService {
         transferPublisher.publish(message);
     }
 
-    public TransferDTO performTransfer(TransferDTO transferDTO) {
+    public TransferDTO performTransfer(TransferDTO transferDTO) throws BusinessException {
         try {
-            accountService.withdraw(transferDTO.getAmount(), transferDTO.getOriginId());
-            accountService.deposit(transferDTO.getAmount(), transferDTO.getTargetId());
+            AccountDTO originAccount = accountService.getAccountById(transferDTO.getOriginId());
+            AccountDTO targetAccount = accountService.getAccountById(transferDTO.getTargetId());
+            if (originAccount.getId().equals(targetAccount.getId())) {
+                throw new BusinessException("The origin and target accounts are the same", HttpStatus.BAD_REQUEST);
+            }
+            accountService.withdraw(transferDTO.getAmount(), originAccount);
+            accountService.deposit(transferDTO.getAmount(), targetAccount);
         } catch (Exception e) {
             transferDTO.setStatus(TransferStatus.FAILED);
             transferRepository.save(TransferMapper.transferDTOToEntity(transferDTO));
-            throw new BusinessException("An error occurred while performing the transfer", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new BusinessException("An error occurred while performing the transfer: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         transferDTO.setStatus(TransferStatus.COMPLETED);
         Transfer transfer = TransferMapper.transferDTOToEntity(transferDTO);
-        transfer = transferRepository.save(transfer);
-
-        return TransferMapper.transferEntityToDTO(transfer);
+        return TransferMapper.transferEntityToDTO(transferRepository.save(transfer));
     }
 }
