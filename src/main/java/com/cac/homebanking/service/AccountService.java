@@ -41,7 +41,7 @@ public class AccountService {
             throw new NotFoundException("This user isn't already existing");
         }
 
-        boolean accountExists = accountRepository.countByUserIdAndAccountType(accountDTO.getUserId(), accountDTO.getAccountType()) > 0;
+        boolean accountExists = accountRepository.countByUserIdAndCurrency(accountDTO.getUserId(), accountDTO.getCurrency()) > 0;
 
         if (accountExists) {
             throw new BusinessException("The user already has an account of this type", HttpStatus.BAD_REQUEST);

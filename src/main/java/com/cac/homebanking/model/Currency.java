@@ -1,6 +1,6 @@
 package com.cac.homebanking.model;
 
-public enum AccountType {
+public enum Currency {
   ARS,
   USD
 }

@@ -1,7 +1,7 @@
 package com.cac.homebanking.controller;
 
 import com.cac.homebanking.client.DTO.USDResponse;
-import com.cac.homebanking.client.DolarApiClient;
+import com.cac.homebanking.client.DollarApiClient;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.model.DTO.AccountDTO;
 import com.cac.homebanking.service.AccountService;
@@ -15,11 +15,11 @@ import java.util.List;
 @RequestMapping(value = "/v1")
 public class AccountController {
     private final AccountService accountService;
-    private final DolarApiClient dolarApiClient;
+    private final DollarApiClient dollarApiClient;
 
-    AccountController(final AccountService accountService, DolarApiClient dolarApiClient) {
+    AccountController(final AccountService accountService, DollarApiClient dollarApiClient) {
         this.accountService = accountService;
-        this.dolarApiClient = dolarApiClient;
+        this.dollarApiClient = dollarApiClient;
     }
 
     @GetMapping(value = "/accounts")
@@ -49,6 +49,6 @@ public class AccountController {
 
     @GetMapping(value = "/accounts/usd/official")
     public ResponseEntity<USDResponse> getOfficialUSD() {
-        return ResponseEntity.ok().body(dolarApiClient.getOfficialUSD());
+        return ResponseEntity.ok().body(dollarApiClient.getOfficialUSD());
     }
 }

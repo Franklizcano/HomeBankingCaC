@@ -1,6 +1,9 @@
 package com.cac.homebanking.service;
 
+import com.cac.homebanking.client.DTO.USDResponse;
+import com.cac.homebanking.client.DollarApiClient;
 import com.cac.homebanking.exception.BusinessException;
+import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
 import com.cac.homebanking.model.DTO.AccountDTO;
@@ -9,6 +12,8 @@ import com.cac.homebanking.model.Transfer;
 import com.cac.homebanking.model.TransferStatus;
 import com.cac.homebanking.publisher.TransferPublisher;
 import com.cac.homebanking.repository.TransferRepository;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
@@ -19,13 +24,15 @@ public class TransferService {
     private final TransferRepository transferRepository;
     private final AccountService accountService;
     private final TransferPublisher transferPublisher;
+    private final DollarApiClient dollarApiClient;
 
     TransferService(final TransferRepository transferRepository,
                            final AccountService accountService,
-                           final TransferPublisher transferPublisher) {
+                           final TransferPublisher transferPublisher, DollarApiClient dollarApiClient) {
         this.transferPublisher = transferPublisher;
         this.transferRepository = transferRepository;
         this.accountService = accountService;
+        this.dollarApiClient = dollarApiClient;
     }
 
     public List<TransferDTO> getTransfers() {
@@ -42,10 +49,10 @@ public class TransferService {
     }
 
     public TransferDTO update(Long id, TransferDTO transferDTO) throws NotFoundException {
-        Optional<Transfer> trasnferCreated = transferRepository.findById(id);
+        Optional<Transfer> transferCreated = transferRepository.findById(id);
 
-        if  (trasnferCreated.isPresent()) {
-            Transfer entity = trasnferCreated.get();
+        if  (transferCreated.isPresent()) {
+            Transfer entity = transferCreated.get();
             Transfer accountUpdated = TransferMapper.transferDTOToEntity(transferDTO);
             accountUpdated.setId(entity.getId());
             Transfer saved = transferRepository.save(accountUpdated);
@@ -75,8 +82,7 @@ public class TransferService {
             if (originAccount.getId().equals(targetAccount.getId())) {
                 throw new BusinessException("The origin and target accounts are the same", HttpStatus.BAD_REQUEST);
             }
-            accountService.withdraw(transferDTO.getAmount(), originAccount);
-            accountService.deposit(transferDTO.getAmount(), targetAccount);
+            executeTransfer(originAccount, targetAccount, transferDTO.getAmount());
         } catch (Exception e) {
             transferDTO.setStatus(TransferStatus.FAILED);
             transferRepository.save(TransferMapper.transferDTOToEntity(transferDTO));
@@ -86,4 +92,37 @@ public class TransferService {
         Transfer transfer = TransferMapper.transferDTOToEntity(transferDTO);
         return TransferMapper.transferEntityToDTO(transferRepository.save(transfer));
     }
+
+    private Boolean isDifferentCurrency(AccountDTO originAccount, AccountDTO targetAccount) {
+      return !originAccount.getCurrency().name()
+          .equalsIgnoreCase(targetAccount.getCurrency().name());
+    }
+
+    private void executeTransfer(AccountDTO originAccount, AccountDTO targetAccount, BigDecimal amount)
+        throws InsufficientFundsException {
+        if (isDifferentCurrency(originAccount, targetAccount)) {
+            USDResponse dollarResponse = dollarApiClient.getOfficialUSD();
+            BigDecimal conversionRate = new BigDecimal(dollarResponse.getSellPrice());
+            BigDecimal targetAmount = getConversionAmount(originAccount, targetAccount, amount, conversionRate);
+
+            accountService.withdraw(amount, originAccount);
+            accountService.deposit(targetAmount, targetAccount);
+
+        } else {
+            accountService.withdraw(amount, originAccount);
+            accountService.deposit(amount, targetAccount);
+        }
+    }
+
+    private BigDecimal getConversionAmount(AccountDTO originAccount, AccountDTO targetAccount,
+        BigDecimal originAmount, BigDecimal conversionRate) {
+        if (originAccount.getCurrency().name().equalsIgnoreCase("ARS") &&
+            targetAccount.getCurrency().name().equalsIgnoreCase("USD")) {
+            // De ARS a USD
+            return originAmount.divide(conversionRate, 2, RoundingMode.HALF_UP);
+        } else {
+            return originAmount.multiply(conversionRate);
+        }
+    }
 }
+

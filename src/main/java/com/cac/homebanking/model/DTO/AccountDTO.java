@@ -1,6 +1,6 @@
 package com.cac.homebanking.model.DTO;
 
-import com.cac.homebanking.model.AccountType;
+import com.cac.homebanking.model.Currency;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,11 +19,5 @@ public class AccountDTO {
     @Column(name = "user_id")
     private Long userId;
     @Enumerated(EnumType.STRING)
-    private AccountType accountType;
-
-    public AccountDTO(Long number, BigDecimal balance, Long userId) {
-        this.number = number;
-        this.balance = balance;
-        this.userId = userId;
-    }
+    private Currency currency;
 }

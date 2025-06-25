@@ -21,7 +21,7 @@ public class Account {
     @Column(name = "user_id")
     private Long userId;
     @Enumerated(EnumType.STRING)
-    private AccountType accountType;
+    private Currency currency;
 
     public Account(Long number, BigDecimal balance, Long userId) {
         this.number = number;
