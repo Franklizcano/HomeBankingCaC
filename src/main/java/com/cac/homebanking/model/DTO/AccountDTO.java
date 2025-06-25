@@ -1,11 +1,13 @@
 package com.cac.homebanking.model.DTO;
 
+import com.cac.homebanking.model.Currency;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 @Setter
 @Getter
@@ -16,10 +18,6 @@ public class AccountDTO {
     private BigDecimal balance;
     @Column(name = "user_id")
     private Long userId;
-
-    public AccountDTO(Long number, BigDecimal balance, Long userId) {
-        this.number = number;
-        this.balance = balance;
-        this.userId = userId;
-    }
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 }

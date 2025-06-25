@@ -12,16 +12,18 @@ public class AccountMapper {
         dto.setId(account.getId());
         dto.setBalance(account.getBalance());
         dto.setNumber(account.getNumber());
+        dto.setCurrency(account.getCurrency());
         dto.setUserId(account.getUserId());
         return dto;
     }
 
     public Account accountDTOToEntity(AccountDTO dto) {
-        Account user = new Account();
-        user.setId(dto.getId());
-        user.setBalance(dto.getBalance());
-        user.setNumber(dto.getNumber());
-        user.setUserId(dto.getUserId());
-        return user;
+        Account account = new Account();
+        account.setId(dto.getId());
+        account.setBalance(dto.getBalance());
+        account.setNumber(dto.getNumber());
+        account.setCurrency(dto.getCurrency());
+        account.setUserId(dto.getUserId());
+        return account;
     }
 }

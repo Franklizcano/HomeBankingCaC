@@ -20,6 +20,8 @@ public class Account {
     private BigDecimal balance;
     @Column(name = "user_id")
     private Long userId;
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
     public Account(Long number, BigDecimal balance, Long userId) {
         this.number = number;

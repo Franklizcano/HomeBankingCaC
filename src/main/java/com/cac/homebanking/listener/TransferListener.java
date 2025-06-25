@@ -1,6 +1,5 @@
 package com.cac.homebanking.listener;
 
-import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.model.DTO.TransferDTO;
 import com.cac.homebanking.service.TransferService;
 import com.rabbitmq.client.Channel;
@@ -29,7 +28,7 @@ public class TransferListener {
       transferService.performTransfer(transferDTO);
       log.info("Transfer processed successfully for UUID: {}. Sending ACK.", transferDTO.getUuid());
       channel.basicAck(tag, false);
-    } catch (BusinessException e) {
+    } catch (Exception e) {
       log.error("Error processing transfer UUID: {}. Sending NACK.", transferDTO.getUuid(), e);
       channel.basicNack(tag, false, false);
     }
