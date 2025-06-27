@@ -1,11 +1,10 @@
 package com.cac.homebanking.service;
 
+import static com.cac.homebanking.model.Currency.ARS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.cac.homebanking.exception.InsufficientFundsException;
-import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
 import com.cac.homebanking.model.Account;
 import com.cac.homebanking.model.DTO.TransferDTO;
@@ -39,9 +38,9 @@ class TransferServiceTest {
   private TransferService transferService;
 
   @Test
-  void performTransfer() throws NotFoundException, InsufficientFundsException {
-    when(accountRepository.findById(1L)).thenReturn(Optional.of(new Account(13123L, BigDecimal.valueOf(1000), 1L)));
-    when(accountRepository.findById(2L)).thenReturn(Optional.of(new Account(12313L, BigDecimal.valueOf(1000), 2L)));
+  void performTransfer() {
+    when(accountRepository.findById(1L)).thenReturn(Optional.of(new Account(13123L, BigDecimal.valueOf(1000), 1L, ARS)));
+    when(accountRepository.findById(2L)).thenReturn(Optional.of(new Account(12313L, BigDecimal.valueOf(1000), 2L, ARS)));
     TransferDTO transferDTO = new TransferDTO(1L, 2L, BigDecimal.valueOf(100), TransferStatus.COMPLETED);
     when(transferRepository.save(any())).thenReturn(TransferMapper.transferDTOToEntity(transferDTO));
 
