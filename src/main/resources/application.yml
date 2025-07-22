@@ -1,0 +1,30 @@
+server:
+  servlet:
+    context-path: /api
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  threads:
+    virtual:
+      enabled: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  datasource:
+    url: jdbc:mysql://localhost:3307/homebanking?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+
+# Personalized properties
+queue:
+  name: test-queue
+
+dolar:
+  api:
+    url: https://dolarapi.com
