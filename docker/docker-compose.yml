@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql-db:
     image: mysql:8.0
-    container_name: mysql-homebanking-db
+    container_name: mysql-homebanking
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 123456
@@ -17,6 +17,17 @@ services:
       timeout: 20s
       retries: 10
 
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack-homebanking
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs
+      - DEFAULT_REGION=us-east-1
+    volumes:
+      - localstack-data:/var/lib/localstack
+
 volumes:
-  # Declara el volumen que se usará para la persistencia
   mysql-data:
+  localstack-data:

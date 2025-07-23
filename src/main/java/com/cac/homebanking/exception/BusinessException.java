@@ -2,9 +2,14 @@ package com.cac.homebanking.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class BusinessException extends RuntimeException{
+public class BusinessException extends RuntimeException {
     private final HttpStatus status;
-    public BusinessException(String message, HttpStatus status){
+    public BusinessException(String message, HttpStatus status, Exception exception){
+        super(message, exception);
+        this.status = status;
+    }
+
+    public BusinessException(String message, HttpStatus status) {
         super(message);
         this.status = status;
     }
