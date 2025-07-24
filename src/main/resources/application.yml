@@ -4,9 +4,9 @@ server:
 
 spring:
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
-    database-platform: org.hibernate.dialect.MySQL8Dialect
   threads:
     virtual:
       enabled: true
@@ -27,8 +27,22 @@ spring:
 
 # Personalized properties
 queue:
-  name: transfer-queue
+  transfers: transfers-queue
 
-dolar:
-  api:
-    url: https://dolarapi.com
+client:
+  dolar-api:
+      url: https://dolarapi.com
+
+# Springwolf configuration
+springwolf:
+  docket:
+    servers:
+      sqs:
+        protocol: sqs
+        host: ${spring.cloud.aws.sqs.endpoint}
+    base-package: com.cac.homebanking
+    info:
+      title: Home Banking API
+      version: 1.0.0
+      description: This is the Home Banking API for managing accounts, transfers, and transactions.
+        It provides endpoints for account management, transfer processing, and transaction history.

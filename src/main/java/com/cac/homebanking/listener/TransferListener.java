@@ -18,9 +18,9 @@ public class TransferListener {
     this.transferService = transferService;
   }
 
-  @SqsListener("${queue.name}")
+  @SqsListener("${queue.transfers}")
   public void processTransfer(TransferDTO transferDTO) {
-    log.info("Message read from queue: transfer-queue, transferId: {}", transferDTO.getUuid());
+    log.info("Message read from queue transfers-queue, transferId: {}", transferDTO.getUuid());
     try {
       transferService.performTransfer(transferDTO);
       log.info("Transfer processed successfully for UUID: {}. Sending ACK.", transferDTO.getUuid());

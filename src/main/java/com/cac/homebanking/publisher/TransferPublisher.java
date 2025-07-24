@@ -18,7 +18,7 @@ public class TransferPublisher {
   private final SqsAsyncClient sqsAsyncClient;
   private final ObjectMapper objectMapper;
 
-  @Value("${queue.name}")
+  @Value("${queue.transfers}")
   private String queueName;
 
   public TransferPublisher(SqsAsyncClient sqsAsyncClient, ObjectMapper objectMapper) {
