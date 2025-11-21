@@ -1,11 +1,11 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.0'
+	id 'org.springframework.boot' version '3.5.8'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.cac'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 java {
 	toolchain {
@@ -24,8 +24,8 @@ repositories {
 }
 
 ext {
-    springBootVersion = '4.0.0'
-    springCloudVersion = '2025.1.0-RC1'
+    springBootVersion = '3.5.8'
+    springCloudVersion = '2025.0.0'
     springCloudAwsVersion = '3.4.1'
     springWolfVersion = '1.6.0'
     lombokVersion = '1.18.42'
@@ -33,18 +33,20 @@ ext {
 
 dependencyManagement {
 	imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
 		mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
 }
 
 dependencies {
 	// Spring dependencies
-	implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
-	implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
-	implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.3.0'
-	implementation("io.awspring.cloud:spring-cloud-aws-starter-sqs:${springCloudAwsVersion}") {
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation("io.awspring.cloud:spring-cloud-aws-starter-sqs") {
 		exclude group: 'commons-logging', module: 'commons-logging'
 	}
 
@@ -59,10 +61,10 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
 
 	// Database dependencies
-	runtimeOnly 'com.mysql:mysql-connector-j:9.1.0'
+	runtimeOnly 'com.mysql:mysql-connector-j:9.5.0'
 
 	// Test dependencies
-	testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation 'org.mockito:mockito-core:5.20.0'
 	testRuntimeOnly 'com.h2database:h2:2.4.240'
 }

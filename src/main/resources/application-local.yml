@@ -1,0 +1,48 @@
+server:
+  servlet:
+    context-path: /api
+
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: jdbc:mysql://localhost:3307/homebanking?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: test
+        secret-key: test
+      sqs:
+        endpoint: http://localhost:4566
+
+# Personalized properties
+queue:
+  transfers: transfers-queue
+
+client:
+  dolar-api:
+      url: https://dolarapi.com
+
+# Springwolf configuration
+springwolf:
+  docket:
+    servers:
+      sqs:
+        protocol: sqs
+        host: ${spring.cloud.aws.sqs.endpoint}
+    base-package: com.cac.homebanking
+    info:
+      title: Home Banking API
+      version: 1.0.0
+      description: This is the Home Banking API for managing accounts, transfers, and transactions.
+        It provides endpoints for account management, transfer processing, and transaction history.
