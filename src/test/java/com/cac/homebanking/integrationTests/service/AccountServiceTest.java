@@ -1,4 +1,4 @@
-package com.cac.homebanking.service;
+package com.cac.homebanking.integrationTests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,6 +8,8 @@ import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.model.Account;
 import com.cac.homebanking.model.DTO.AccountDTO;
 import com.cac.homebanking.repository.AccountRepository;
+import com.cac.homebanking.service.AccountService;
+import com.cac.homebanking.service.UserService;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

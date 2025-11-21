@@ -1,4 +1,4 @@
-package com.cac.homebanking.service;
+package com.cac.homebanking.integrationTests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,6 +14,8 @@ import com.cac.homebanking.model.DTO.TransferDTO;
 import com.cac.homebanking.model.TransferStatus;
 import com.cac.homebanking.repository.AccountRepository;
 import com.cac.homebanking.repository.TransferRepository;
+import com.cac.homebanking.service.AccountService;
+import com.cac.homebanking.service.TransferService;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

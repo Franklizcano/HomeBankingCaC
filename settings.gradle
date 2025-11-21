@@ -1,0 +1,8 @@
+rootProject.name = 'HomeBankingCaC'
+
+buildCache {
+    local {
+        enabled = true
+        directory = new File(rootDir, 'build-cache')
+    }
+}
