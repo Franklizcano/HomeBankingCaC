@@ -1,7 +1,7 @@
-package com.cac.homebanking.publisher;
+package com.cac.homebanking.event.publisher;
 
 import com.cac.homebanking.exception.BusinessException;
-import com.cac.homebanking.model.DTO.TransferDTO;
+import com.cac.homebanking.model.dto.TransferDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -26,19 +26,19 @@ public class TransferPublisher {
     this.objectMapper = objectMapper;
   }
 
-  public void publish(TransferDTO transferDTO) {
+  public void publish(TransferDto transferDTO) {
     try {
       sendMessage(transferDTO);
     } catch (Exception e) {
-      log.error("Error sending message to SQS queue: {}, transferId: {}", queueName, transferDTO.getUuid(), e);
+      log.error("Error sending message to SQS queue: {}, transferId: {}", queueName, transferDTO.getId(), e);
       throw new BusinessException("Failed to send message to SQS queue ", HttpStatus.INTERNAL_SERVER_ERROR ,e);
     }
   }
 
-  private void sendMessage(TransferDTO transferDTO) throws JsonProcessingException {
+  private void sendMessage(TransferDto transferDTO) throws JsonProcessingException {
     SendMessageRequest message = SendMessageRequest.builder().queueUrl(queueName)
         .messageBody(objectMapper.writeValueAsString(transferDTO)).build();
     sqsAsyncClient.sendMessage(message).join();
-    log.info("Message sent to SQS queue: {}, transferId: {}", queueName, transferDTO.getUuid());
+    log.info("Message sent to SQS queue: {}, transferId: {}", queueName, transferDTO.getId());
   }
 }

@@ -1,16 +1,13 @@
 package com.cac.homebanking.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -18,12 +15,14 @@ import lombok.Setter;
 @Table(name = "transfers")
 public class Transfer {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
     @Column(name = "origin_id")
-    private Long originId;
+    private UUID originId;
     @Column(name = "target_id")
-    private Long targetId;
+    private UUID targetId;
+    @Column(name = "identifier_type")
+    private IdentifierType identifierType;
     private ZonedDateTime date = ZonedDateTime.now();
     private BigDecimal amount;
     @Enumerated

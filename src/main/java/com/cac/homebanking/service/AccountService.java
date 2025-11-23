@@ -5,13 +5,15 @@ import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.AccountMapper;
 import com.cac.homebanking.model.Account;
-import com.cac.homebanking.model.DTO.AccountDTO;
+import com.cac.homebanking.model.dto.AccountDto;
 import com.cac.homebanking.repository.AccountRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
+import java.util.UUID;
 
 @Service
 public class AccountService {
@@ -24,19 +26,19 @@ public class AccountService {
         this.userService = userService;
     }
 
-    public List<AccountDTO> getAllAccounts() {
+    public List<AccountDto> getAllAccounts() {
         return accountRepository.findAll()
                 .stream()
                 .map(AccountMapper::accountEntityToDTO)
                 .toList();
     }
 
-    public AccountDTO getAccountById(Long id) throws NotFoundException {
+    public AccountDto getAccountById(UUID id) throws NotFoundException {
         Account account = accountRepository.findById(id).orElseThrow(() -> new NotFoundException("The account is not found with id: " + id));
         return AccountMapper.accountEntityToDTO(account);
     }
 
-    public AccountDTO createAccount(AccountDTO accountDTO) throws NotFoundException {
+    public AccountDto createAccount(AccountDto accountDTO) throws NotFoundException {
         if (!userService.existsById(accountDTO.getUserId())) {
             throw new NotFoundException("This user isn't already existing");
         }
@@ -51,8 +53,8 @@ public class AccountService {
         return AccountMapper.accountEntityToDTO(savedAccount);
     }
 
-    public AccountDTO withdraw(BigDecimal amount, AccountDTO account) throws InsufficientFundsException {
-        if(account.getBalance().compareTo(amount) >= 0) {
+    public AccountDto withdraw(BigDecimal amount, AccountDto account) throws InsufficientFundsException {
+        if (account.getBalance().compareTo(amount) >= 0) {
             account.setBalance(account.getBalance().subtract(amount));
             accountRepository.save(AccountMapper.accountDTOToEntity(account));
         } else {
@@ -61,16 +63,16 @@ public class AccountService {
         return account;
     }
 
-    public AccountDTO deposit(BigDecimal amount, AccountDTO account) {
+    public AccountDto deposit(BigDecimal amount, AccountDto account) {
         account.setBalance(account.getBalance().add(amount));
         accountRepository.save(AccountMapper.accountDTOToEntity(account));
         return account;
     }
 
-    public AccountDTO update(Long id, AccountDTO accountDTO) throws NotFoundException {
+    public AccountDto update(UUID id, AccountDto accountDTO) throws NotFoundException {
         Optional<Account> accountCreated = accountRepository.findById(id);
 
-        if  (accountCreated.isPresent()) {
+        if (accountCreated.isPresent()) {
             Account entity = accountCreated.get();
             Account accountUpdated = AccountMapper.accountDTOToEntity(accountDTO);
             accountUpdated.setId(entity.getId());
@@ -81,7 +83,7 @@ public class AccountService {
         }
     }
 
-    public String delete(Long id) {
+    public String delete(UUID id) {
         if (accountRepository.existsById(id)) {
             accountRepository.deleteById(id);
             return "The account has been deleted.";

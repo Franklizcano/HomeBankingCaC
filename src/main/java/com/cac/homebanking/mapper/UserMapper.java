@@ -1,14 +1,14 @@
 package com.cac.homebanking.mapper;
 
-import com.cac.homebanking.model.DTO.UserDTO;
+import com.cac.homebanking.model.dto.UserDto;
 import com.cac.homebanking.model.UserBank;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class UserMapper {
 
-    public UserDTO userEntityToDTO(UserBank user) {
-        UserDTO dto = new UserDTO();
+    public UserDto userEntityToDTO(UserBank user) {
+        UserDto dto = new UserDto();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setPassword(user.getPassword());
@@ -16,7 +16,7 @@ public class UserMapper {
         return dto;
     }
 
-    public UserBank userDTOToEntity(UserDTO dto) {
+    public UserBank userDTOToEntity(UserDto dto) {
         UserBank user = new UserBank();
         user.setId(dto.getId());
         user.setUsername(dto.getUsername());

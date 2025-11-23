@@ -3,15 +3,17 @@ package com.cac.homebanking.service;
 import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.UserMapper;
-import com.cac.homebanking.model.DTO.UserDTO;
 import com.cac.homebanking.model.UserBank;
+import com.cac.homebanking.model.dto.UserDto;
 import com.cac.homebanking.repository.UserRepository;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -22,14 +24,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserDTO> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
                 .map(UserMapper::userEntityToDTO)
                 .toList();
     }
 
-    public UserDTO getUserById(Long id) throws NotFoundException {
+    public UserDto getUserById(UUID id) throws NotFoundException {
         Optional<UserBank> user;
         try {
             user = userRepository.findById(id);
@@ -45,14 +47,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserDto createUser(UserDto userDTO) {
         if (userDTO.getAccounts().isEmpty()) {
             userDTO.setAccounts(Collections.emptyList());
         }
         return UserMapper.userEntityToDTO(userRepository.save(UserMapper.userDTOToEntity(userDTO)));
     }
 
-    public UserDTO update(Long id, UserDTO userDTO) throws NotFoundException {
+    public UserDto update(UUID id, UserDto userDTO) throws NotFoundException {
         Optional<UserBank> userCreated = userRepository.findById(id);
 
         if  (userCreated.isPresent()) {
@@ -66,7 +68,7 @@ public class UserService {
         }
     }
 
-    public String delete(Long id) throws NotFoundException {
+    public String delete(UUID id) throws NotFoundException {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return "The user has been deleted.";
@@ -75,7 +77,7 @@ public class UserService {
         }
     }
 
-    public Boolean existsById(Long id) {
+    public Boolean existsById(UUID id) {
         return userRepository.existsById(id);
     }
 }
