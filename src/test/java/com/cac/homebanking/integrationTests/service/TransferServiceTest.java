@@ -51,16 +51,16 @@ class TransferServiceTest {
         String originUserId = UUID.randomUUID().toString();
         String targetUserId = UUID.randomUUID().toString();
 
-        AccountDto originAccount = buildAccountDTO(originAccountId, BigDecimal.valueOf(1000), originUserId, Currency.ARS);
-        AccountDto destinationAccount = buildAccountDTO(targetAccountId, BigDecimal.valueOf(1000), targetUserId, Currency.ARS);
+        AccountDto originAccount = buildAccountDTO(originAccountId, BigDecimal.valueOf(1000), originUserId, Currency.ARS, 124L, "test");
+        AccountDto destinationAccount = buildAccountDTO(targetAccountId, BigDecimal.valueOf(1000), targetUserId, Currency.ARS, 123L, "test1");
 
         when(accountService.getAccountById(originAccountId)).thenReturn(originAccount);
         when(accountService.getAccountById(targetAccountId)).thenReturn(destinationAccount);
 
         when(accountService.withdraw(any(BigDecimal.class), eq(originAccount)))
-                .thenReturn(buildAccountDTO(originAccountId, BigDecimal.valueOf(900), originUserId, Currency.ARS));
+                .thenReturn(buildAccountDTO(originAccountId, BigDecimal.valueOf(900), originUserId, Currency.ARS, 124L, "test"));
         when(accountService.deposit(any(BigDecimal.class), eq(destinationAccount)))
-                .thenReturn(buildAccountDTO(targetAccountId, BigDecimal.valueOf(1100), targetUserId, Currency.ARS));
+                .thenReturn(buildAccountDTO(targetAccountId, BigDecimal.valueOf(1100), targetUserId, Currency.ARS, 123L, "test1"));
 
         TransferDto transferDTO = new TransferDto(originAccountId, targetAccountId, IdentifierType.ID, BigDecimal.valueOf(100), TransferStatus.COMPLETED);
         when(transferRepository.save(any())).thenReturn(TransferMapper.transferDTOToEntity(transferDTO));
@@ -73,12 +73,13 @@ class TransferServiceTest {
         assertEquals(transferDTO.getTargetId(), result.getTargetId());
     }
 
-    AccountDto buildAccountDTO(String id, BigDecimal balance, String userId, Currency currency) {
+    AccountDto buildAccountDTO(String id, BigDecimal balance, String userId, Currency currency, Long cbu, String alias) {
         AccountDto accountDTO = new AccountDto();
         accountDTO.setId(id);
         accountDTO.setBalance(balance);
         accountDTO.setUserId(userId);
-        accountDTO.setCurrency(currency); // Assuming currency is a String in AccountDTO
+        accountDTO.setCurrency(currency);
+        accountDTO.setCbu(cbu);
         return accountDTO;
     }
 }
