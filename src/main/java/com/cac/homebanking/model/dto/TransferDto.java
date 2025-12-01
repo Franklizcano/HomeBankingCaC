@@ -2,29 +2,36 @@ package com.cac.homebanking.model.dto;
 
 import com.cac.homebanking.model.IdentifierType;
 import com.cac.homebanking.model.TransferStatus;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
-@EqualsAndHashCode
 public class TransferDto {
-    private UUID id;
-    private UUID originId;
-    private UUID targetId;
+    private String id;
+    private String originId;
+    private String targetId;
     private IdentifierType identifierType;
+    private Long cbu;
+    private String alias;
     private ZonedDateTime date = ZonedDateTime.now();
     private BigDecimal amount;
     private TransferStatus status;
 
-    public TransferDto(UUID originId, UUID targetId, IdentifierType identifierType, BigDecimal amount, TransferStatus status) {
+    public TransferDto(String originId, String targetId, IdentifierType identifierType, BigDecimal amount, TransferStatus status, Long cbu, String alias) {
+        this.originId = originId;
+        this.targetId = targetId;
+        this.identifierType = identifierType;
+        this.amount = amount;
+        this.status = status;
+        this.cbu = cbu;
+        this.alias = alias;
+    }
+
+    public TransferDto(String originId, String targetId, IdentifierType identifierType, BigDecimal amount, TransferStatus status) {
         this.originId = originId;
         this.targetId = targetId;
         this.identifierType = identifierType;

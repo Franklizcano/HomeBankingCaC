@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1")
@@ -26,7 +25,7 @@ public class TransferController {
     }
 
     @GetMapping(value = "/transfers/{transferId}")
-    public ResponseEntity<TransferDto> getTransfer(@PathVariable UUID transferId) throws NotFoundException {
+    public ResponseEntity<TransferDto> getTransfer(@PathVariable String transferId) throws NotFoundException {
         return ResponseEntity.ok().body(transferService.getTransferById(transferId));
     }
 

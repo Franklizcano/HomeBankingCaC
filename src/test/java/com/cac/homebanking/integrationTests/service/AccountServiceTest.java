@@ -33,7 +33,7 @@ class AccountServiceTest {
 
     @Test
     void withdraw() throws InsufficientFundsException {
-        AccountDto accountDTO = buildAccountDTO(UUID.randomUUID(), BigDecimal.valueOf(1000), UUID.randomUUID());
+        AccountDto accountDTO = buildAccountDTO(UUID.randomUUID().toString(), BigDecimal.valueOf(1000), UUID.randomUUID().toString());
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
         AccountDto result = accountService.withdraw(BigDecimal.valueOf(100), accountDTO);
         assertEquals(BigDecimal.valueOf(900), result.getBalance());
@@ -41,13 +41,13 @@ class AccountServiceTest {
 
     @Test
     void deposit() {
-        AccountDto accountDTO = buildAccountDTO(UUID.randomUUID(), BigDecimal.valueOf(1000), UUID.randomUUID());
+        AccountDto accountDTO = buildAccountDTO(UUID.randomUUID().toString(), BigDecimal.valueOf(1000), UUID.randomUUID().toString());
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
         AccountDto result = accountService.deposit(BigDecimal.valueOf(100), accountDTO);
         assertEquals(BigDecimal.valueOf(1100), result.getBalance());
     }
 
-    private AccountDto buildAccountDTO(UUID id, BigDecimal balance, UUID userId) {
+    private AccountDto buildAccountDTO(String id, BigDecimal balance, String userId) {
         AccountDto accountDTO = new AccountDto();
         accountDTO.setId(id);
         accountDTO.setBalance(balance);

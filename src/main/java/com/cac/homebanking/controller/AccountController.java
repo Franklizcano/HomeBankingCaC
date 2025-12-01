@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/v1")
@@ -29,7 +28,7 @@ public class AccountController {
     }
 
     @GetMapping(value = "/accounts/{accountId}")
-    public ResponseEntity<AccountDto> getAccount(@PathVariable UUID accountId) throws NotFoundException {
+    public ResponseEntity<AccountDto> getAccount(@PathVariable String accountId) throws NotFoundException {
         return ResponseEntity.ok().body(accountService.getAccountById(accountId));
     }
 
@@ -39,12 +38,12 @@ public class AccountController {
     }
 
     @PutMapping(value = "/accounts/{accountId}")
-    public ResponseEntity<AccountDto> updateAccount(@PathVariable UUID accountId, @RequestBody AccountDto accountDTO) throws NotFoundException {
+    public ResponseEntity<AccountDto> updateAccount(@PathVariable String accountId, @RequestBody AccountDto accountDTO) throws NotFoundException {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(accountService.update(accountId, accountDTO));
     }
 
     @DeleteMapping(value = "/accounts/{accountId}")
-    public ResponseEntity<String> deleteAccount(@PathVariable UUID accountId) {
+    public ResponseEntity<String> deleteAccount(@PathVariable String accountId) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(accountService.delete(accountId));
     }
 

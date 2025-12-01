@@ -46,10 +46,10 @@ class TransferServiceTest {
 
     @Test
     void performTransfer() throws NotFoundException, InsufficientFundsException {
-        UUID originAccountId = UUID.randomUUID();
-        UUID targetAccountId = UUID.randomUUID();
-        UUID originUserId = UUID.randomUUID();
-        UUID targetUserId = UUID.randomUUID();
+        String originAccountId = UUID.randomUUID().toString();
+        String targetAccountId = UUID.randomUUID().toString();
+        String originUserId = UUID.randomUUID().toString();
+        String targetUserId = UUID.randomUUID().toString();
 
         AccountDto originAccount = buildAccountDTO(originAccountId, BigDecimal.valueOf(1000), originUserId, Currency.ARS);
         AccountDto destinationAccount = buildAccountDTO(targetAccountId, BigDecimal.valueOf(1000), targetUserId, Currency.ARS);
@@ -73,7 +73,7 @@ class TransferServiceTest {
         assertEquals(transferDTO.getTargetId(), result.getTargetId());
     }
 
-    AccountDto buildAccountDTO(UUID id, BigDecimal balance, UUID userId, Currency currency) {
+    AccountDto buildAccountDTO(String id, BigDecimal balance, String userId, Currency currency) {
         AccountDto accountDTO = new AccountDto();
         accountDTO.setId(id);
         accountDTO.setBalance(balance);

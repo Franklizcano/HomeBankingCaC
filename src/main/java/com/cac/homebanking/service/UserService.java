@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -31,7 +30,7 @@ public class UserService {
                 .toList();
     }
 
-    public UserDto getUserById(UUID id) throws NotFoundException {
+    public UserDto getUserById(String id) throws NotFoundException {
         Optional<UserBank> user;
         try {
             user = userRepository.findById(id);
@@ -54,7 +53,7 @@ public class UserService {
         return UserMapper.userEntityToDTO(userRepository.save(UserMapper.userDTOToEntity(userDTO)));
     }
 
-    public UserDto update(UUID id, UserDto userDTO) throws NotFoundException {
+    public UserDto update(String id, UserDto userDTO) throws NotFoundException {
         Optional<UserBank> userCreated = userRepository.findById(id);
 
         if  (userCreated.isPresent()) {
@@ -68,7 +67,7 @@ public class UserService {
         }
     }
 
-    public String delete(UUID id) throws NotFoundException {
+    public String delete(String id) throws NotFoundException {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return "The user has been deleted.";
@@ -77,7 +76,7 @@ public class UserService {
         }
     }
 
-    public Boolean existsById(UUID id) {
+    public Boolean existsById(String id) {
         return userRepository.existsById(id);
     }
 }

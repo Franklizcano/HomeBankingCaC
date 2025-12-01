@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AccountService {
@@ -33,8 +32,18 @@ public class AccountService {
                 .toList();
     }
 
-    public AccountDto getAccountById(UUID id) throws NotFoundException {
+    public AccountDto getAccountById(String id) throws NotFoundException {
         Account account = accountRepository.findById(id).orElseThrow(() -> new NotFoundException("The account is not found with id: " + id));
+        return AccountMapper.accountEntityToDTO(account);
+    }
+
+    public AccountDto getAccountByCBU(Long cbu) throws NotFoundException {
+        Account account = accountRepository.findByCbu(cbu).orElseThrow(() -> new NotFoundException("The account is not found with cbu: " + cbu));
+        return AccountMapper.accountEntityToDTO(account);
+    }
+
+    public AccountDto getAccountByAlias(String alias) throws NotFoundException {
+        Account account = accountRepository.findByAlias(alias).orElseThrow(() -> new NotFoundException("The account is not found with alias: " + alias));
         return AccountMapper.accountEntityToDTO(account);
     }
 
@@ -69,7 +78,7 @@ public class AccountService {
         return account;
     }
 
-    public AccountDto update(UUID id, AccountDto accountDTO) throws NotFoundException {
+    public AccountDto update(String id, AccountDto accountDTO) throws NotFoundException {
         Optional<Account> accountCreated = accountRepository.findById(id);
 
         if (accountCreated.isPresent()) {
@@ -83,7 +92,7 @@ public class AccountService {
         }
     }
 
-    public String delete(UUID id) {
+    public String delete(String id) {
         if (accountRepository.existsById(id)) {
             accountRepository.deleteById(id);
             return "The account has been deleted.";

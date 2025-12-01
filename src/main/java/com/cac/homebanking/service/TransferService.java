@@ -7,10 +7,11 @@ import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
-import com.cac.homebanking.model.dto.AccountDto;
-import com.cac.homebanking.model.dto.TransferDto;
+import com.cac.homebanking.model.IdentifierType;
 import com.cac.homebanking.model.Transfer;
 import com.cac.homebanking.model.TransferStatus;
+import com.cac.homebanking.model.dto.AccountDto;
+import com.cac.homebanking.model.dto.TransferDto;
 import com.cac.homebanking.repository.TransferRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class TransferService {
@@ -43,7 +43,7 @@ public class TransferService {
                 .toList();
     }
 
-    public TransferDto getTransferById(UUID transferId) throws NotFoundException {
+    public TransferDto getTransferById(String transferId) throws NotFoundException {
         Transfer transfer = transferRepository.findById(transferId).orElseThrow(() ->
                 new NotFoundException("The transfer is not found with id " + transferId));
         return TransferMapper.transferEntityToDTO(transfer);
@@ -55,9 +55,24 @@ public class TransferService {
 
     public TransferDto performTransfer(TransferDto transferDTO) throws BusinessException {
         try {
-            AccountDto originAccount = accountService.getAccountById(transferDTO.getOriginId());
-            AccountDto targetAccount = accountService.getAccountById(transferDTO.getTargetId());
-            if (originAccount.getId().equals(targetAccount.getId())) {
+            AccountDto originAccount;
+            AccountDto targetAccount;
+            switch (transferDTO.getIdentifierType()) {
+                case IdentifierType.ID -> {
+                    originAccount = accountService.getAccountById(transferDTO.getOriginId());
+                    targetAccount = accountService.getAccountById(transferDTO.getTargetId());
+                }
+                case IdentifierType.CBU -> {
+                    originAccount = accountService.getAccountByCBU(transferDTO.getCbu());
+                    targetAccount = accountService.getAccountByCBU(transferDTO.getCbu());
+                }
+                case IdentifierType.ALIAS -> {
+                    originAccount = accountService.getAccountByAlias(transferDTO.getAlias());
+                    targetAccount = accountService.getAccountByAlias(transferDTO.getAlias());
+                }
+                default -> throw new BusinessException("Invalid identifier type", HttpStatus.BAD_REQUEST);
+            }
+            if (originAccount.getCbu().equals(targetAccount.getCbu())) {
                 throw new BusinessException("The origin and target accounts are the same", HttpStatus.BAD_REQUEST);
             }
             executeTransfer(originAccount, targetAccount, transferDTO.getAmount());

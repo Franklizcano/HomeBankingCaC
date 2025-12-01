@@ -4,10 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Setter
 @Getter
@@ -16,17 +14,18 @@ import java.util.UUID;
 @Table(name = "accounts")
 public class Account {
     @Id
-    @UuidGenerator
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "CHAR(36)")
+    private String id;
     private Long cbu;
     private String alias;
     private BigDecimal balance;
     @Column(name = "user_id")
-    private UUID userId;
+    private String userId;
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    public Account(Long cbu, String alias, BigDecimal balance, UUID userId) {
+    public Account(Long cbu, String alias, BigDecimal balance, String userId) {
         this.cbu = cbu;
         this.alias = alias;
         this.balance = balance;

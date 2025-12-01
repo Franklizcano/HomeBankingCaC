@@ -5,10 +5,11 @@ import com.cac.homebanking.model.Currency;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Repository
-public interface AccountRepository extends JpaRepository<Account, UUID> {
-
-  Integer countByUserIdAndCurrency(UUID userId, Currency currency);
+public interface AccountRepository extends JpaRepository<Account, String> {
+    Integer countByUserIdAndCurrency(String userId, Currency currency);
+    Optional<Account> findByCbu(Long cbu);
+    Optional<Account> findByAlias(String alias);
 }
