@@ -14,17 +14,22 @@ import java.math.BigDecimal;
 @Table(name = "accounts")
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long number;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "CHAR(36)")
+    private String id;
+    @Column(nullable = false, unique = true)
+    private Long cbu;
+    @Column(nullable = false, unique = true)
+    private String alias;
     private BigDecimal balance;
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    public Account(Long number, BigDecimal balance, Long userId) {
-        this.number = number;
+    public Account(Long cbu, String alias, BigDecimal balance, String userId) {
+        this.cbu = cbu;
+        this.alias = alias;
         this.balance = balance;
         this.userId = userId;
     }

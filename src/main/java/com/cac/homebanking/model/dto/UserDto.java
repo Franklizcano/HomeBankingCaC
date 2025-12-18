@@ -1,4 +1,4 @@
-package com.cac.homebanking.model.DTO;
+package com.cac.homebanking.model.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +10,9 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
-public class UserDTO {
-
-    private Long id;
+public class UserDto {
+    private String id;
     private String username;
     private String password;
-    private List<AccountDTO> accounts = new ArrayList<>();
+    private List<AccountDto> accounts = new ArrayList<>();
 }

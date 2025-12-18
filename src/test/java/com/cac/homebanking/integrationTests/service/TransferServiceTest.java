@@ -1,22 +1,17 @@
 package com.cac.homebanking.integrationTests.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
 import com.cac.homebanking.model.Currency;
-import com.cac.homebanking.model.DTO.AccountDTO;
-import com.cac.homebanking.model.DTO.TransferDTO;
+import com.cac.homebanking.model.IdentifierType;
 import com.cac.homebanking.model.TransferStatus;
+import com.cac.homebanking.model.dto.AccountDto;
+import com.cac.homebanking.model.dto.TransferDto;
 import com.cac.homebanking.repository.AccountRepository;
 import com.cac.homebanking.repository.TransferRepository;
 import com.cac.homebanking.service.AccountService;
 import com.cac.homebanking.service.TransferService;
-import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,52 +20,66 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TransferServiceTest {
 
-  @Mock
-  private AccountRepository accountRepository;
+    @Mock
+    private AccountRepository accountRepository;
 
-  @Mock
-  private TransferRepository transferRepository;
+    @Mock
+    private TransferRepository transferRepository;
 
-  @Mock
-  private AccountService accountService;
+    @Mock
+    private AccountService accountService;
 
-  @InjectMocks
-  private TransferService transferService;
+    @InjectMocks
+    private TransferService transferService;
 
-  @Test
-  void performTransfer() throws NotFoundException, InsufficientFundsException {
-    AccountDTO originAccount = buildAccountDTO(1L, BigDecimal.valueOf(1000), 1L, Currency.ARS);
-    AccountDTO destinationAccount = buildAccountDTO(2L, BigDecimal.valueOf(1000), 2L, Currency.ARS);
+    @Test
+    void performTransfer() throws NotFoundException, InsufficientFundsException {
+        String originAccountId = UUID.randomUUID().toString();
+        String targetAccountId = UUID.randomUUID().toString();
+        String originUserId = UUID.randomUUID().toString();
+        String targetUserId = UUID.randomUUID().toString();
 
-    when(accountService.getAccountById(1L)).thenReturn(originAccount);
-    when(accountService.getAccountById(2L)).thenReturn(destinationAccount);
+        AccountDto originAccount = buildAccountDTO(originAccountId, BigDecimal.valueOf(1000), originUserId, Currency.ARS, 124L, "test");
+        AccountDto destinationAccount = buildAccountDTO(targetAccountId, BigDecimal.valueOf(1000), targetUserId, Currency.ARS, 123L, "test1");
 
-    when(accountService.withdraw(any(BigDecimal.class), eq(originAccount)))
-        .thenReturn(buildAccountDTO(1L, BigDecimal.valueOf(900), 1L, Currency.ARS));
-    when(accountService.deposit(any(BigDecimal.class), eq(destinationAccount)))
-        .thenReturn(buildAccountDTO(2L, BigDecimal.valueOf(1100), 2L, Currency.ARS));
+        when(accountService.getAccountById(originAccountId)).thenReturn(originAccount);
+        when(accountService.getAccountById(targetAccountId)).thenReturn(destinationAccount);
 
-    TransferDTO transferDTO = new TransferDTO(1L, 2L, BigDecimal.valueOf(100), TransferStatus.COMPLETED);
-    when(transferRepository.save(any())).thenReturn(TransferMapper.transferDTOToEntity(transferDTO));
+        when(accountService.withdraw(any(BigDecimal.class), eq(originAccount)))
+                .thenReturn(buildAccountDTO(originAccountId, BigDecimal.valueOf(900), originUserId, Currency.ARS, 124L, "test"));
+        when(accountService.deposit(any(BigDecimal.class), eq(destinationAccount)))
+                .thenReturn(buildAccountDTO(targetAccountId, BigDecimal.valueOf(1100), targetUserId, Currency.ARS, 123L, "test1"));
 
-    TransferDTO result = transferService.performTransfer(transferDTO);
+        TransferDto transferDTO = new TransferDto(originAccountId, targetAccountId, IdentifierType.ID, BigDecimal.valueOf(100), TransferStatus.COMPLETED);
+        when(transferRepository.save(any())).thenReturn(TransferMapper.transferDTOToEntity(transferDTO));
 
-    assertEquals(TransferStatus.COMPLETED, result.getStatus());
-    assertEquals(transferDTO.getAmount(), result.getAmount());
-    assertEquals(transferDTO.getOriginId(), result.getOriginId());
-    assertEquals(transferDTO.getTargetId(), result.getTargetId());
-  }
+        TransferDto result = transferService.performTransfer(transferDTO);
 
-  AccountDTO buildAccountDTO(Long id, BigDecimal balance, Long userId, Currency currency) {
-    AccountDTO accountDTO = new AccountDTO();
-    accountDTO.setId(id);
-    accountDTO.setBalance(balance);
-    accountDTO.setUserId(userId);
-    accountDTO.setCurrency(currency); // Assuming currency is a String in AccountDTO
-    return accountDTO;
-  }
+        assertEquals(TransferStatus.COMPLETED, result.getStatus());
+        assertEquals(transferDTO.getAmount(), result.getAmount());
+        assertEquals(transferDTO.getOriginId(), result.getOriginId());
+        assertEquals(transferDTO.getTargetId(), result.getTargetId());
+    }
+
+    AccountDto buildAccountDTO(String id, BigDecimal balance, String userId, Currency currency, Long cbu, String alias) {
+        AccountDto accountDTO = new AccountDto();
+        accountDTO.setId(id);
+        accountDTO.setBalance(balance);
+        accountDTO.setUserId(userId);
+        accountDTO.setCurrency(currency);
+        accountDTO.setCbu(cbu);
+        return accountDTO;
+    }
 }

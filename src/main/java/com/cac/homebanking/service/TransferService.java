@@ -2,22 +2,22 @@ package com.cac.homebanking.service;
 
 import com.cac.homebanking.client.DTO.USDResponse;
 import com.cac.homebanking.client.DollarApiClient;
+import com.cac.homebanking.event.publisher.TransferPublisher;
 import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
-import com.cac.homebanking.model.DTO.AccountDTO;
-import com.cac.homebanking.model.DTO.TransferDTO;
 import com.cac.homebanking.model.Transfer;
 import com.cac.homebanking.model.TransferStatus;
-import com.cac.homebanking.publisher.TransferPublisher;
+import com.cac.homebanking.model.dto.AccountDto;
+import com.cac.homebanking.model.dto.TransferDto;
 import com.cac.homebanking.repository.TransferRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service
 public class TransferService {
@@ -27,62 +27,40 @@ public class TransferService {
     private final DollarApiClient dollarApiClient;
 
     TransferService(final TransferRepository transferRepository,
-                           final AccountService accountService,
-                           final TransferPublisher transferPublisher, DollarApiClient dollarApiClient) {
+                    final AccountService accountService,
+                    final TransferPublisher transferPublisher, DollarApiClient dollarApiClient) {
         this.transferPublisher = transferPublisher;
         this.transferRepository = transferRepository;
         this.accountService = accountService;
         this.dollarApiClient = dollarApiClient;
     }
 
-    public List<TransferDTO> getTransfers() {
+    public List<TransferDto> getTransfers() {
         return transferRepository.findAll()
                 .stream()
                 .map(TransferMapper::transferEntityToDTO)
                 .toList();
     }
 
-    public TransferDTO getTransferById(Long transferId) throws NotFoundException {
+    public TransferDto getTransferById(String transferId) throws NotFoundException {
         Transfer transfer = transferRepository.findById(transferId).orElseThrow(() ->
                 new NotFoundException("The transfer is not found with id " + transferId));
         return TransferMapper.transferEntityToDTO(transfer);
     }
 
-    public TransferDTO update(Long id, TransferDTO transferDTO) throws NotFoundException {
-        Optional<Transfer> transferCreated = transferRepository.findById(id);
-
-        if  (transferCreated.isPresent()) {
-            Transfer entity = transferCreated.get();
-            Transfer accountUpdated = TransferMapper.transferDTOToEntity(transferDTO);
-            accountUpdated.setId(entity.getId());
-            Transfer saved = transferRepository.save(accountUpdated);
-            return TransferMapper.transferEntityToDTO(saved);
-        } else {
-            throw new NotFoundException("User not found with the id " + id);
-        }
-    }
-
-    public String delete(Long id) {
-        if (transferRepository.existsById(id)) {
-            transferRepository.deleteById(id);
-            return "The transfer has been deleted.";
-        } else {
-            return "The transfer has not been deleted";
-        }
-    }
-
-    public void publish(TransferDTO message) {
+    public void publish(TransferDto message) {
         transferPublisher.publish(message);
     }
 
-    public TransferDTO performTransfer(TransferDTO transferDTO) throws BusinessException {
+    private record AccountPair(AccountDto originAccount, AccountDto targetAccount) {}
+
+    public TransferDto performTransfer(TransferDto transferDTO) throws BusinessException {
         try {
-            AccountDTO originAccount = accountService.getAccountById(transferDTO.getOriginId());
-            AccountDTO targetAccount = accountService.getAccountById(transferDTO.getTargetId());
-            if (originAccount.getId().equals(targetAccount.getId())) {
+            AccountPair accounts = resolveAccounts(transferDTO);
+            if (accounts.originAccount.getCbu().equals(accounts.targetAccount.getCbu())) {
                 throw new BusinessException("The origin and target accounts are the same", HttpStatus.BAD_REQUEST);
             }
-            executeTransfer(originAccount, targetAccount, transferDTO.getAmount());
+            executeTransfer(accounts.originAccount, accounts.targetAccount, transferDTO.getAmount());
         } catch (Exception e) {
             transferDTO.setStatus(TransferStatus.FAILED);
             transferRepository.save(TransferMapper.transferDTOToEntity(transferDTO));
@@ -93,13 +71,30 @@ public class TransferService {
         return TransferMapper.transferEntityToDTO(transferRepository.save(transfer));
     }
 
-    private Boolean isDifferentCurrency(AccountDTO originAccount, AccountDTO targetAccount) {
-      return !originAccount.getCurrency().name()
-          .equalsIgnoreCase(targetAccount.getCurrency().name());
+    private AccountPair resolveAccounts(TransferDto transferDTO) throws BusinessException, NotFoundException {
+        return switch (transferDTO.getIdentifierType()) {
+            case ID -> new AccountPair(
+                    accountService.getAccountById(transferDTO.getOriginId()),
+                    accountService.getAccountById(transferDTO.getTargetId())
+            );
+            case CBU -> new AccountPair(
+                    accountService.getAccountByCBU(transferDTO.getOriginId()),
+                    accountService.getAccountByCBU(transferDTO.getTargetId())
+            );
+            case ALIAS -> new AccountPair(
+                    accountService.getAccountByAlias(transferDTO.getOriginId()),
+                    accountService.getAccountByAlias(transferDTO.getTargetId())
+            );
+        };
     }
 
-    private void executeTransfer(AccountDTO originAccount, AccountDTO targetAccount, BigDecimal amount)
-        throws InsufficientFundsException {
+    private Boolean isDifferentCurrency(AccountDto originAccount, AccountDto targetAccount) {
+        return !originAccount.getCurrency().name()
+                .equalsIgnoreCase(targetAccount.getCurrency().name());
+    }
+
+    private void executeTransfer(AccountDto originAccount, AccountDto targetAccount, BigDecimal amount)
+            throws InsufficientFundsException {
         if (isDifferentCurrency(originAccount, targetAccount)) {
             USDResponse dollarResponse = dollarApiClient.getOfficialUSD();
             BigDecimal conversionRate = new BigDecimal(dollarResponse.getSellPrice());
@@ -114,10 +109,10 @@ public class TransferService {
         }
     }
 
-    private BigDecimal getConversionAmount(AccountDTO originAccount, AccountDTO targetAccount,
-        BigDecimal originAmount, BigDecimal conversionRate) {
+    private BigDecimal getConversionAmount(AccountDto originAccount, AccountDto targetAccount,
+                                           BigDecimal originAmount, BigDecimal conversionRate) {
         if (originAccount.getCurrency().name().equalsIgnoreCase("ARS") &&
-            targetAccount.getCurrency().name().equalsIgnoreCase("USD")) {
+                targetAccount.getCurrency().name().equalsIgnoreCase("USD")) {
             // De ARS a USD
             return originAmount.divide(conversionRate, 2, RoundingMode.HALF_UP);
         } else {
@@ -125,4 +120,3 @@ public class TransferService {
         }
     }
 }
-

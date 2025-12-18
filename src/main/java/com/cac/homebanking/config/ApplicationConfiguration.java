@@ -1,12 +1,15 @@
 package com.cac.homebanking.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -14,11 +17,12 @@ public class ApplicationConfiguration {
     @Bean
     @Primary
     public ObjectMapper defaultObjectMapper() {
-      return Jackson2ObjectMapperBuilder.json()
-          .propertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
-          .serializationInclusion(JsonInclude.Include.NON_NULL)
-          .failOnUnknownProperties(false)
-          .failOnEmptyBeans(false)
-          .build();
+        return JsonMapper.builder()
+                .propertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
+                .serializationInclusion(JsonInclude.Include.NON_NULL)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                .addModule(new JavaTimeModule())
+                .build();
     }
 }

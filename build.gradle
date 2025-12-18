@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.8'
+	id 'org.springframework.boot' version '4.0.0'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -24,9 +24,9 @@ repositories {
 }
 
 ext {
-    springBootVersion = '3.5.8'
-    springCloudVersion = '2025.0.0'
-    springCloudAwsVersion = '3.4.1'
+    springBootVersion = '4.0.0'
+    springCloudVersion = '2025.1.0'
+    springCloudAwsVersion = '4.0.0-M1'
     springWolfVersion = '1.6.0'
     lombokVersion = '1.18.42'
 }
