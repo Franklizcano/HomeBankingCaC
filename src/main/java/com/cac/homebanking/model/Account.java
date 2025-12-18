@@ -17,7 +17,9 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "CHAR(36)")
     private String id;
+    @Column(nullable = false, unique = true)
     private Long cbu;
+    @Column(nullable = false, unique = true)
     private String alias;
     private BigDecimal balance;
     @Column(name = "user_id")

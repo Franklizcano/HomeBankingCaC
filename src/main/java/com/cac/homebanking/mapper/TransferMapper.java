@@ -15,6 +15,7 @@ public class TransferMapper {
         transferDTO.setDate(transfer.getDate());
         transferDTO.setAmount(transfer.getAmount());
         transferDTO.setStatus(transfer.getStatus());
+        transferDTO.setIdentifierType(transfer.getIdentifierType());
         return transferDTO;
     }
 
@@ -26,6 +27,7 @@ public class TransferMapper {
         transfer.setDate(transferDTO.getDate());
         transfer.setAmount(transferDTO.getAmount());
         transfer.setStatus(transferDTO.getStatus());
+        transferDTO.setIdentifierType(transferDTO.getIdentifierType());
         return transfer;
     }
 }

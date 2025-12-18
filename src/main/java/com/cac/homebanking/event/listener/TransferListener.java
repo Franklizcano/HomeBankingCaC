@@ -20,12 +20,12 @@ public class TransferListener {
 
     @SqsListener("${queue.transfers}")
     public void processTransfer(TransferDto transferDto) {
-        log.info("Message read from queue transfers-queue, transferId: {}", transferDto.getId());
+        log.info("Message read from queue transfers-queue, originId: {}, targetId {}", transferDto.getOriginId(), transferDto.getTargetId());
         try {
-            transferService.performTransfer(transferDto);
-            log.info("Transfer processed successfully for UUID: {}. Sending ACK.", transferDto.getId());
+            TransferDto transferResult = transferService.performTransfer(transferDto);
+            log.info("Transfer processed successfully for UUID: {}. Sending ACK.", transferResult.getId());
         } catch (Exception e) {
-            log.error("Error processing transfer UUID: {}. Sending NACK.", transferDto.getId(), e);
+            log.error("Error processing transfer for originId: {}, targetId: {}. Sending NACK.", transferDto.getOriginId(), transferDto.getTargetId(), e);
             throw new BusinessException("Failed to process transfer", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }

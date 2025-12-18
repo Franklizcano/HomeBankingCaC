@@ -15,30 +15,30 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 @Slf4j
 public class TransferPublisher {
 
-  private final SqsAsyncClient sqsAsyncClient;
-  private final ObjectMapper objectMapper;
+    private final SqsAsyncClient sqsAsyncClient;
+    private final ObjectMapper objectMapper;
 
-  @Value("${queue.transfers}")
-  private String queueName;
+    @Value("${queue.transfers}")
+    private String queueName;
 
-  public TransferPublisher(SqsAsyncClient sqsAsyncClient, ObjectMapper objectMapper) {
-    this.sqsAsyncClient = sqsAsyncClient;
-    this.objectMapper = objectMapper;
-  }
-
-  public void publish(TransferDto transferDTO) {
-    try {
-      sendMessage(transferDTO);
-    } catch (Exception e) {
-      log.error("Error sending message to SQS queue: {}, transferId: {}", queueName, transferDTO.getId(), e);
-      throw new BusinessException("Failed to send message to SQS queue ", HttpStatus.INTERNAL_SERVER_ERROR ,e);
+    public TransferPublisher(SqsAsyncClient sqsAsyncClient, ObjectMapper objectMapper) {
+        this.sqsAsyncClient = sqsAsyncClient;
+        this.objectMapper = objectMapper;
     }
-  }
 
-  private void sendMessage(TransferDto transferDTO) throws JsonProcessingException {
-    SendMessageRequest message = SendMessageRequest.builder().queueUrl(queueName)
-        .messageBody(objectMapper.writeValueAsString(transferDTO)).build();
-    sqsAsyncClient.sendMessage(message).join();
-    log.info("Message sent to SQS queue: {}, transferId: {}", queueName, transferDTO.getId());
-  }
+    public void publish(TransferDto transferDTO) {
+        try {
+            sendMessage(transferDTO);
+        } catch (Exception e) {
+            log.error("Error sending message to SQS queue: {}, transferId: {}", queueName, transferDTO.getId(), e);
+            throw new BusinessException("Failed to send message to SQS queue", HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
+    }
+
+    private void sendMessage(TransferDto transferDTO) throws JsonProcessingException {
+        SendMessageRequest message = SendMessageRequest.builder().queueUrl(queueName)
+                .messageBody(objectMapper.writeValueAsString(transferDTO)).build();
+        sqsAsyncClient.sendMessage(message).join();
+        log.info("Message sent to SQS queue: {}, originId: {}, targetId: {}", queueName, transferDTO.getOriginId(), transferDTO.getTargetId());
+    }
 }

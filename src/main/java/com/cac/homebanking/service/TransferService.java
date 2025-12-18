@@ -7,7 +7,6 @@ import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.exception.InsufficientFundsException;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.mapper.TransferMapper;
-import com.cac.homebanking.model.IdentifierType;
 import com.cac.homebanking.model.Transfer;
 import com.cac.homebanking.model.TransferStatus;
 import com.cac.homebanking.model.dto.AccountDto;
@@ -53,29 +52,15 @@ public class TransferService {
         transferPublisher.publish(message);
     }
 
+    private record AccountPair(AccountDto originAccount, AccountDto targetAccount) {}
+
     public TransferDto performTransfer(TransferDto transferDTO) throws BusinessException {
         try {
-            AccountDto originAccount;
-            AccountDto targetAccount;
-            switch (transferDTO.getIdentifierType()) {
-                case IdentifierType.ID -> {
-                    originAccount = accountService.getAccountById(transferDTO.getOriginId());
-                    targetAccount = accountService.getAccountById(transferDTO.getTargetId());
-                }
-                case IdentifierType.CBU -> {
-                    originAccount = accountService.getAccountByCBU(transferDTO.getCbu());
-                    targetAccount = accountService.getAccountByCBU(transferDTO.getCbu());
-                }
-                case IdentifierType.ALIAS -> {
-                    originAccount = accountService.getAccountByAlias(transferDTO.getAlias());
-                    targetAccount = accountService.getAccountByAlias(transferDTO.getAlias());
-                }
-                default -> throw new BusinessException("Invalid identifier type", HttpStatus.BAD_REQUEST);
-            }
-            if (originAccount.getCbu().equals(targetAccount.getCbu())) {
+            AccountPair accounts = resolveAccounts(transferDTO);
+            if (accounts.originAccount.getCbu().equals(accounts.targetAccount.getCbu())) {
                 throw new BusinessException("The origin and target accounts are the same", HttpStatus.BAD_REQUEST);
             }
-            executeTransfer(originAccount, targetAccount, transferDTO.getAmount());
+            executeTransfer(accounts.originAccount, accounts.targetAccount, transferDTO.getAmount());
         } catch (Exception e) {
             transferDTO.setStatus(TransferStatus.FAILED);
             transferRepository.save(TransferMapper.transferDTOToEntity(transferDTO));
@@ -84,6 +69,23 @@ public class TransferService {
         transferDTO.setStatus(TransferStatus.COMPLETED);
         Transfer transfer = TransferMapper.transferDTOToEntity(transferDTO);
         return TransferMapper.transferEntityToDTO(transferRepository.save(transfer));
+    }
+
+    private AccountPair resolveAccounts(TransferDto transferDTO) throws BusinessException, NotFoundException {
+        return switch (transferDTO.getIdentifierType()) {
+            case ID -> new AccountPair(
+                    accountService.getAccountById(transferDTO.getOriginId()),
+                    accountService.getAccountById(transferDTO.getTargetId())
+            );
+            case CBU -> new AccountPair(
+                    accountService.getAccountByCBU(transferDTO.getOriginId()),
+                    accountService.getAccountByCBU(transferDTO.getTargetId())
+            );
+            case ALIAS -> new AccountPair(
+                    accountService.getAccountByAlias(transferDTO.getOriginId()),
+                    accountService.getAccountByAlias(transferDTO.getTargetId())
+            );
+        };
     }
 
     private Boolean isDifferentCurrency(AccountDto originAccount, AccountDto targetAccount) {

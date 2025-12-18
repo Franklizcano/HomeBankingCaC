@@ -37,8 +37,16 @@ public class AccountService {
         return AccountMapper.accountEntityToDTO(account);
     }
 
-    public AccountDto getAccountByCBU(Long cbu) throws NotFoundException {
-        Account account = accountRepository.findByCbu(cbu).orElseThrow(() -> new NotFoundException("The account is not found with cbu: " + cbu));
+    public AccountDto getAccountByCBU(String cbu) throws NotFoundException {
+        Long cbuLong;
+
+        try {
+            cbuLong = Long.parseLong(cbu);
+        } catch (NumberFormatException exception) {
+            throw new BusinessException("Invalid CBU format: " + cbu, HttpStatus.BAD_REQUEST);
+        }
+
+        Account account = accountRepository.findByCbu(cbuLong).orElseThrow(() -> new NotFoundException("The account is not found with cbu: " + cbu));
         return AccountMapper.accountEntityToDTO(account);
     }
 

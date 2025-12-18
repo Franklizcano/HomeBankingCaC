@@ -20,7 +20,7 @@ public class UserBank {
     private String id;
     private String username;
     private String password;
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private List<Account> accounts = new ArrayList<>();
 }
