@@ -3,6 +3,7 @@ package com.cac.homebanking.controller;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.model.dto.TransferDto;
 import com.cac.homebanking.service.TransferService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1")
+@RequiredArgsConstructor
 public class TransferController {
 
     private final TransferService transferService;
-
-    TransferController(final TransferService transferService) {
-        this.transferService = transferService;
-    }
 
     @GetMapping(value = "/transfers")
     public ResponseEntity<List<TransferDto>> getAllTransfers() {

@@ -49,6 +49,7 @@ dependencies {
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-sqs") {
 		exclude group: 'commons-logging', module: 'commons-logging'
 	}
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	// Other dependencies
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"

@@ -3,6 +3,7 @@ package com.cac.homebanking.controller;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.model.dto.UserDto;
 import com.cac.homebanking.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    UserController(final UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping(value = "/users")
     public ResponseEntity<List<UserDto>> getAllUsers() {
