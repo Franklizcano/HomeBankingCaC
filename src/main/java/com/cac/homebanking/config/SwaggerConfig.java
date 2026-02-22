@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-  @Bean
-  public OpenAPI springShopOpenAPI() {
-    return new OpenAPI()
-        .info(new Info().title("HomeBanking API")
-            .description("HomeBanking API RESTful documentation")
-            .version("v1.0.0")
-            .license(new License().name("Apache 2.0").url("https://springdoc.org"))
-        );
-  }
+    @Bean
+    public OpenAPI springShopOpenAPI() {
+        return new OpenAPI()
+                .info(new Info().title("HomeBanking API")
+                        .description("HomeBanking API RESTful documentation")
+                        .version("v1.0.0")
+                        .license(new License().name("Apache 2.0").url("https://springdoc.org"))
+                );
+    }
 }

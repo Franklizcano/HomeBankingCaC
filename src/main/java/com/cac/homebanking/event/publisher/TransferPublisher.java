@@ -4,6 +4,7 @@ import com.cac.homebanking.exception.BusinessException;
 import com.cac.homebanking.model.dto.TransferDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class TransferPublisher {
 
     private final SqsAsyncClient sqsAsyncClient;
@@ -20,11 +22,6 @@ public class TransferPublisher {
 
     @Value("${queue.transfers}")
     private String queueName;
-
-    public TransferPublisher(SqsAsyncClient sqsAsyncClient, ObjectMapper objectMapper) {
-        this.sqsAsyncClient = sqsAsyncClient;
-        this.objectMapper = objectMapper;
-    }
 
     public void publish(TransferDto transferDTO) {
         try {

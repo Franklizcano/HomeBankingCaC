@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.0'
+	id 'org.springframework.boot' version '4.0.3'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -24,7 +24,7 @@ repositories {
 }
 
 ext {
-    springBootVersion = '4.0.0'
+    springBootVersion = '4.0.3'
     springCloudVersion = '2025.1.0'
     springCloudAwsVersion = '4.0.0-M1'
     springWolfVersion = '1.6.0'
@@ -49,6 +49,7 @@ dependencies {
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-sqs") {
 		exclude group: 'commons-logging', module: 'commons-logging'
 	}
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	// Other dependencies
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"

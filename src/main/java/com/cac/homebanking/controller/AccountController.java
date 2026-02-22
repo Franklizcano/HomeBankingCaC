@@ -1,10 +1,11 @@
 package com.cac.homebanking.controller;
 
-import com.cac.homebanking.client.DTO.USDResponse;
+import com.cac.homebanking.client.dto.USDResponse;
 import com.cac.homebanking.client.DollarApiClient;
 import com.cac.homebanking.exception.NotFoundException;
 import com.cac.homebanking.model.dto.AccountDto;
 import com.cac.homebanking.service.AccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +14,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1")
+@RequiredArgsConstructor
 public class AccountController {
+
     private final AccountService accountService;
     private final DollarApiClient dollarApiClient;
-
-    AccountController(final AccountService accountService, DollarApiClient dollarApiClient) {
-        this.accountService = accountService;
-        this.dollarApiClient = dollarApiClient;
-    }
 
     @GetMapping(value = "/accounts")
     public ResponseEntity<List<AccountDto>> getAllAccounts() {

@@ -1,6 +1,6 @@
 package com.cac.homebanking.service;
 
-import com.cac.homebanking.client.DTO.USDResponse;
+import com.cac.homebanking.client.dto.USDResponse;
 import com.cac.homebanking.client.DollarApiClient;
 import com.cac.homebanking.event.publisher.TransferPublisher;
 import com.cac.homebanking.exception.BusinessException;
@@ -12,6 +12,7 @@ import com.cac.homebanking.model.TransferStatus;
 import com.cac.homebanking.model.dto.AccountDto;
 import com.cac.homebanking.model.dto.TransferDto;
 import com.cac.homebanking.repository.TransferRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,20 +21,12 @@ import java.math.RoundingMode;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TransferService {
     private final TransferRepository transferRepository;
     private final AccountService accountService;
     private final TransferPublisher transferPublisher;
     private final DollarApiClient dollarApiClient;
-
-    TransferService(final TransferRepository transferRepository,
-                    final AccountService accountService,
-                    final TransferPublisher transferPublisher, DollarApiClient dollarApiClient) {
-        this.transferPublisher = transferPublisher;
-        this.transferRepository = transferRepository;
-        this.accountService = accountService;
-        this.dollarApiClient = dollarApiClient;
-    }
 
     public List<TransferDto> getTransfers() {
         return transferRepository.findAll()

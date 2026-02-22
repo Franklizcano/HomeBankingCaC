@@ -6,7 +6,9 @@ import com.cac.homebanking.mapper.UserMapper;
 import com.cac.homebanking.model.UserBank;
 import com.cac.homebanking.model.dto.UserDto;
 import com.cac.homebanking.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +17,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
-    UserService(final UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll()
@@ -50,6 +50,7 @@ public class UserService {
         if (userDTO.getAccounts().isEmpty()) {
             userDTO.setAccounts(Collections.emptyList());
         }
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         return UserMapper.userEntityToDTO(userRepository.save(UserMapper.userDTOToEntity(userDTO)));
     }
 
