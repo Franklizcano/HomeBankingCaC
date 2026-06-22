@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableFeignClients
 public class HomeBankingCaCApplication {
 
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		SpringApplication.run(HomeBankingCaCApplication.class, args);
 	}
 }
