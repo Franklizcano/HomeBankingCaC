@@ -1,6 +1,5 @@
 package com.cac.homebanking.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.awspring.cloud.sqs.support.converter.SqsMessagingMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +9,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.net.URI;
 
@@ -30,9 +30,8 @@ public class SqsConfig {
     }
 
     @Bean
-    public SqsTemplate sqsTemplate(SqsAsyncClient sqsAsyncClient, ObjectMapper defaultObjectMapper) {
-        var converter = new SqsMessagingMessageConverter();
-        converter.setObjectMapper(defaultObjectMapper);
+    public SqsTemplate sqsTemplate(SqsAsyncClient sqsAsyncClient, JsonMapper defaultObjectMapper) {
+        var converter = new SqsMessagingMessageConverter(defaultObjectMapper);
         return SqsTemplate.builder().sqsAsyncClient(sqsAsyncClient).messageConverter(converter).build();
     }
 }
